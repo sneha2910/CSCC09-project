@@ -1,10 +1,9 @@
-import './ULHomepage.css';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import ULProjectCover from './ULProjectCover';
-import { Button } from 'react-bootstrap';
+import ULProjectCover from '../components/ULProjectCover';
+import { Button, Container, Row } from 'react-bootstrap';
 import { BsPlus, BsGear } from 'react-icons/bs';
-import ULNavbar from './ULNavbar';
+import ULNavbar from '../components/ULNavbar';
 
 class ULHomepage extends React.Component {
   render() {
@@ -24,12 +23,12 @@ class ULHomepage extends React.Component {
               <BsGear className="align-self-center"/>
             </Button>
           </div>
-          <div className="px-5 py-2 container">
-            <div className="row">
+          <Container className="px-5 py-2">
+            <Row>
               <ULProjectCover name="The first project"/>
               <ULProjectCover name="My first project"/>
-            </div>
-          </div>       
+            </Row>
+          </Container>       
         </div>
         <Link to="/credits"> Credits </Link>
       </div>

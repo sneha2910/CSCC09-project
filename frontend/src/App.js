@@ -1,7 +1,7 @@
 import "./App.css";
 import React from "react";
-import ULHomepage from "./ULHomepage";
-import ULCreditsPage from "./ULCreditsPage";
+import ULHomepage from "./routes/ULHomepage";
+import ULCredits from "./routes/ULCredits";
 import { Route, Routes } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -10,7 +10,7 @@ class App extends React.Component {
     return (
       <Routes>
         <Route path="/" element={<ULHomepage />} />
-        <Route path="/credits" element={<ULCreditsPage />} />
+        <Route path="/credits" element={<ULCredits />} />
       </Routes>
     );
   }
