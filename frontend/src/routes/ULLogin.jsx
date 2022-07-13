@@ -9,11 +9,6 @@ import { ULGoogleButton } from "../components/ULGoogleButton";
 
 export default function ULLogin() {
     const createUser = (username, password) => {
-    const createUser = {
-      //userId: `user-${users.length}`,
-      username,
-      password,
-    };
 };
 
   return (
