@@ -18,20 +18,17 @@ const ULDesignCanvas = (props) => {
 
   /* State elements: the elements that are displayed. */
   const [elements, setElements] = pElements;
-  const updateElements = (element) => {
+  const updateElements = (element, updateObject) => {
     const oldSize = elements[element.id].position;
     const currentSize = {
       ...oldSize,
-      width: element.position.width,
-      height: element.position.height,
+      ...updateObject,
     };
-    if (
-      oldSize.width !== currentSize.width ||
-      oldSize.height !== currentSize.height
-    ) {
-      apiService.updateElement(props.filename, element);
-      setElements({ ...elements, [element.id]: element });
-    }
+    element.position = currentSize;
+
+    console.log("updateElements", element, currentSize);
+    setElements({ ...elements, [element.id]: element });
+    apiService.updateElement(props.filename, element);
   };
 
   return (

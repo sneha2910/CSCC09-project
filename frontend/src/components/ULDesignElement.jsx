@@ -25,8 +25,11 @@ const ULDesignElement = (props) => {
 
   useEffect(() => {
     const currentElement = elementRef.current;
-    const resizeObserver = new ResizeObserver(() => {
-      update(element);
+    const resizeObserver = new ResizeObserver((observerEntries) => {
+      update(element, {
+        width: observerEntries[0].contentRect.width,
+        height: observerEntries[0].contentRect.height,
+      });
     });
     resizeObserver.observe(currentElement);
 
