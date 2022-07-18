@@ -27,16 +27,55 @@ const ULDesignElement = (props) => {
     const currentElement = elementRef.current;
     const resizeObserver = new ResizeObserver((observerEntries) => {
       update(element, {
-        width: observerEntries[0].contentRect.width,
-        height: observerEntries[0].contentRect.height,
+        width: observerEntries[0].contentRect.width + "px",
+        height: observerEntries[0].contentRect.height + "px",
       });
     });
     resizeObserver.observe(currentElement);
 
+    /* Drag and move element */
+    let isDragging = false;
+    const offset = [0, 0];
+    console.log(isSelected);
+    const onMouseDown = (e) => {
+      if (isDragging || !isSelected) {
+        return;
+      }
+      const { clientX, clientY } = e;
+      offset[0] = clientX - currentElement.offsetLeft;
+      offset[1] = clientY - currentElement.offsetTop;
+      isDragging = true;
+    };
+    const onMouseUp = (e) => {
+      if (isDragging) {
+        isDragging = false;
+        return;
+      }
+    };
+    const onMouseMove = (e) => {
+      if (!isDragging) {
+        return;
+      }
+      const { clientX, clientY } = e;
+      const newLeft = clientX - offset[0];
+      const newTop = clientY - offset[1];
+      const updatedPosition = {
+        left: newLeft + "px",
+        top: newTop + "px",
+      };
+      update(element, updatedPosition);
+    };
+    currentElement.addEventListener("mousedown", onMouseDown);
+    currentElement.addEventListener("mouseup", onMouseUp);
+    currentElement.addEventListener("mousemove", onMouseMove);
+
     return () => {
       resizeObserver.unobserve(currentElement);
+      currentElement.removeEventListener("mousedown", onMouseDown);
+      currentElement.removeEventListener("mouseup", onMouseUp);
+      currentElement.removeEventListener("mousemove", onMouseMove);
     };
-  }, [elementRef]);
+  }, [elementRef, element, isSelected]);
 
   return (
     <div style={getContainerStyle(element)} ref={elementRef}>
