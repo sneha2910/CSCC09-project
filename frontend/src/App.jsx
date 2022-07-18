@@ -9,6 +9,7 @@ import ULForgetPassword from './routes/ULForgetPassword';
 import ULTOSPage from './routes/ULTOSPage';
 import ULHomepage from './routes/ULHomepage';
 import ULCredits from './routes/ULCredits';
+import ULDesign from './routes/ULDesign';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/TOSPage" element={<ULTOSPage />} />
         <Route path="/" element={<ULHomepage />} />
         <Route path="/credits" element={<ULCredits />} />
+        <Route path="/design" element={<ULDesign />} />
       </Routes>
   );
 }
