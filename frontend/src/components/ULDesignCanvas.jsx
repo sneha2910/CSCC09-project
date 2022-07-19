@@ -33,16 +33,13 @@ const ULDesignCanvas = (props) => {
 
   return (
     <div className="h-100 w-100 border position-relative">
-      <div
-        className="h-100 w-100 d-relative"
-        onClick={unselectAllElements}
-      ></div>
       {Object.values(allElements).map((element) => {
         return (
           <ULDesignElement
             element={element}
             isSelected={element.id === selectedElement}
-            onClick={selectThisElement(element)}
+            onFocus={selectThisElement(element)} 
+            onBlur={unselectAllElements}
             update={updateElements}
             filename={props.filename}
             key={element.id}

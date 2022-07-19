@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { useEffect } from "react";
 
 const ULDesignElement = (props) => {
-  const { element, isSelected, onClick, filename, update } = props;
+  const { element, isSelected, onFocus, onBlur, filename, update } = props;
 
   /* Reference to this element. */
   const elementRef = useRef(null);
@@ -82,7 +82,9 @@ const ULDesignElement = (props) => {
       <div
         className="h-100 w-100"
         style={getElementStyle(element)}
-        onClick={onClick}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        tabIndex="0"
       >
         {element.content}
       </div>

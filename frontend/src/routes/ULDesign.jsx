@@ -58,7 +58,7 @@ const ULDesign = () => {
       console.log("get elements", elements);
       setElements(elements);
     });
-  }, [filename]);
+  }, [filename, setElements]);
 
   /* Properties of the states */
   const properties = {
