@@ -1,6 +1,5 @@
-import { Button, Stack } from "react-bootstrap";
+import { Stack } from "react-bootstrap";
 import ULDesignElementPanelItem from "./ULDesignElementPanelItem";
-import { toKebabCase } from "../utils/utils.js";
 
 const ULDesignElementPanel = (props) => {
   const { element, updateElement } = props;
