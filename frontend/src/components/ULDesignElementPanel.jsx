@@ -67,7 +67,7 @@ const ULDesignElementPanel = (props) => {
           min="0"
           max="100"
           name="Text Size"
-          value={parseInt(element.text.size)}
+          value={parseInt(element.text.fontSize)}
           update={getSetter((value) => ({
             text: { fontSize: value + "px" },
           }))}
