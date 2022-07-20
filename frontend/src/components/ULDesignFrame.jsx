@@ -5,6 +5,7 @@ import ULDesignCanvas from "./ULDesignCanvas";
 import { useState } from "react";
 import apiService from "../services/localApiService.js";
 import { useEffect } from "react";
+import ULDesignElementPanel from "./ULDesignElementPanel";
 
 const ULDesignFrame = () => {
   /* Get the name of the file from the URL */
@@ -24,8 +25,8 @@ const ULDesignFrame = () => {
         height: "40px",
       },
       style: {
-        backgroundColor: "red",
-        borderRadius: "50%",
+        backgroundColor: "black",
+        borderRadius: "10px 10px",
       },
     };
   };
@@ -35,6 +36,25 @@ const ULDesignFrame = () => {
   /* State selectedElement: the element that is selected by the current user. */
   const pSelectedElement = useState(null);
   const [selectedElement, setSelectedElement] = pSelectedElement;
+
+  const updateElement = (element, updateObject) => {
+    console.log("update:", element, updateObject);
+    const newObject = { ...elements[element.id] };
+    for (const key in updateObject) {
+      newObject[key] = {
+        ...newObject[key],
+        ...updateObject[key],
+      };
+    }
+
+    console.log("updateElement", element, newObject);
+    setElements({ ...elements, [element.id]: newObject });
+    apiService.updateElement(filename, newObject);
+  };
+
+  const updatePosition = (element, updateObject) => {
+    return updateElement(element, { position: updateObject });
+  };
 
   /* Connect to api service */
   const createElement = () => {
@@ -61,7 +81,7 @@ const ULDesignFrame = () => {
 
   /* Properties of the states */
   const properties = {
-    pElements, pSelectedElement,
+    pSelectedElement,
   };
 
   return (
@@ -75,10 +95,17 @@ const ULDesignFrame = () => {
         </Button>
       </Stack>
       <div className="flex-grow-1">
-        <ULDesignCanvas
-          content={elements}
-          properties={properties}
-        />
+        <Stack direction="horizontal" className="h-100 w-100">
+          <ULDesignCanvas
+            content={elements}
+            properties={properties}
+            updateElement={updatePosition}
+          />
+          <ULDesignElementPanel
+            element={elements[selectedElement]}
+            updateElement={updateElement}
+          />
+        </Stack>
       </div>
     </Stack>
   );
