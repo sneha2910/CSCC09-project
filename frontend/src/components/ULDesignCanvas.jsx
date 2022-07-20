@@ -51,13 +51,13 @@ const ULDesignCanvas = (props) => {
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
     >
+      <div className="h-100 w-100" onClick={unselectAllElements}></div>
       {Object.values(allElements).map((element) => {
         return (
           <ULDesignElement
             element={element}
             isSelected={element.id === selectedElement}
             onFocus={selectThisElement(element)}
-            onBlur={unselectAllElements}
             setMouseMoveCb={setMouseMoveCb}
             key={element.id}
           />

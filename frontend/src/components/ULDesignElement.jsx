@@ -1,9 +1,8 @@
 import { useRef } from "react";
-import { useEffect, useState } from "react";
 import ULDesignElementHandle from "./ULDesignElementHandle";
 
 const ULDesignElement = (props) => {
-  const { element, isSelected, onFocus, onBlur, setMouseMoveCb } = props;
+  const { element, isSelected, onFocus, setMouseMoveCb } = props;
 
   /* Reference to this element. */
   const elementRef = useRef(null);
@@ -42,9 +41,7 @@ const ULDesignElement = (props) => {
     <div
       style={getContainerStyle(element)}
       ref={elementRef}
-      tabIndex="0"
-      onFocus={onFocus}
-      onBlur={onBlur}
+      onMouseDown={onFocus}
     >
       <div
         className="h-100 w-100"
