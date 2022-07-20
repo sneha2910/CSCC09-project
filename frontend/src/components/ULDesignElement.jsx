@@ -1,8 +1,9 @@
 import { useRef } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import ULDesignElementHandle from "./ULDesignElementHandle";
 
 const ULDesignElement = (props) => {
-  const { element, isSelected, onFocus, onBlur, filename, update } = props;
+  const { element, isSelected, onFocus, onBlur, setMouseMoveCb } = props;
 
   /* Reference to this element. */
   const elementRef = useRef(null);
@@ -11,8 +12,6 @@ const ULDesignElement = (props) => {
     if (isSelected) {
       return {
         ...element.position,
-        resize: "both",
-        overflow: "hidden",
         outline: "2px solid blue",
       };
     } else {
@@ -23,71 +22,49 @@ const ULDesignElement = (props) => {
     return element.style;
   };
 
-  useEffect(() => {
-    const currentElement = elementRef.current;
-    const resizeObserver = new ResizeObserver((observerEntries) => {
-      update(element, {
-        width: observerEntries[0].contentRect.width + "px",
-        height: observerEntries[0].contentRect.height + "px",
-      });
+  const onMouseDown = (e) => {
+    const { clientX: startClientX, clientY: startClientY } = e;
+    const { offsetLeft, offsetTop } = elementRef.current;
+    const mouseMoveCb = (e) => {
+      const { clientX, clientY } = e;
+      const diffX = clientX - startClientX;
+      const diffY = clientY - startClientY;
+      const newLeft = offsetLeft + diffX;
+      const newTop = offsetTop + diffY;
+      return [element, { left: `${newLeft}px`, top: `${newTop}px` }];
+    };
+    setMouseMoveCb({
+      fn: mouseMoveCb,
     });
-    resizeObserver.observe(currentElement);
-
-    /* Drag and move element */
-    let isDragging = false;
-    const offset = [0, 0];
-    console.log(isSelected);
-    const onMouseDown = (e) => {
-      if (isDragging || !isSelected) {
-        return;
-      }
-      const { clientX, clientY } = e;
-      offset[0] = clientX - currentElement.offsetLeft;
-      offset[1] = clientY - currentElement.offsetTop;
-      isDragging = true;
-    };
-    const onMouseUp = (e) => {
-      if (isDragging) {
-        isDragging = false;
-        return;
-      }
-    };
-    const onMouseMove = (e) => {
-      if (!isDragging) {
-        return;
-      }
-      const { clientX, clientY } = e;
-      const newLeft = clientX - offset[0];
-      const newTop = clientY - offset[1];
-      const updatedPosition = {
-        left: newLeft + "px",
-        top: newTop + "px",
-      };
-      update(element, updatedPosition);
-    };
-    currentElement.addEventListener("mousedown", onMouseDown);
-    currentElement.addEventListener("mouseup", onMouseUp);
-    currentElement.addEventListener("mousemove", onMouseMove);
-
-    return () => {
-      resizeObserver.unobserve(currentElement);
-      currentElement.removeEventListener("mousedown", onMouseDown);
-      currentElement.removeEventListener("mouseup", onMouseUp);
-      currentElement.removeEventListener("mousemove", onMouseMove);
-    };
-  }, [elementRef, element, isSelected]);
+  };
 
   return (
-    <div style={getContainerStyle(element)} ref={elementRef}>
+    <div
+      style={getContainerStyle(element)}
+      ref={elementRef}
+      tabIndex="0"
+      onFocus={onFocus}
+      onBlur={onBlur}
+    >
       <div
         className="h-100 w-100"
         style={getElementStyle(element)}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        tabIndex="0"
+        onMouseDown={onMouseDown}
       >
         {element.content}
       </div>
+      {isSelected &&
+        ["tl", "tr", "bl", "br"].map((handlePos) => {
+          return (
+            <ULDesignElementHandle
+              key={handlePos}
+              handlePos={handlePos}
+              elementRef={elementRef}
+              element={element}
+              setMouseMoveCb={setMouseMoveCb}
+            />
+          );
+        })}
     </div>
   );
 };
