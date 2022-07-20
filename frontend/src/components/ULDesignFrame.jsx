@@ -33,6 +33,8 @@ const ULDesignFrame = () => {
       },
       text: {
         content: "text",
+        fontSize: "20px",
+        color: "white",
       }
     };
   };

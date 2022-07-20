@@ -20,6 +20,7 @@ const ULDesignElement = (props) => {
   const getElementStyle = (element) => {
     return {
       ...element.style,
+      ...element.text,
       userSelect: "none",
     };
   };

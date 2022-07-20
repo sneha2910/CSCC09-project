@@ -54,9 +54,35 @@ const ULDesignElementPanel = (props) => {
             style: { borderRadius: value + "px" },
           }))}
         />
+        <ULDesignElementPanelItem
+          type="input"
+          name="Text"
+          value={element.text.content}
+          update={getSetter((value) => ({
+            text: { content: value },
+          }))}
+        />
+        <ULDesignElementPanelItem
+          type="range"
+          min="0"
+          max="100"
+          name="Text Size"
+          value={parseInt(element.text.size)}
+          update={getSetter((value) => ({
+            text: { fontSize: value + "px" },
+          }))}
+        />
+        <ULDesignElementPanelItem
+          type="color"
+          name="Text Color"
+          value={element.text.color}
+          update={getSetter((value) => ({
+            text: { color: value },
+          }))}
+        />
       </Stack>
     )
   );
-};
+}
 
 export default ULDesignElementPanel;
