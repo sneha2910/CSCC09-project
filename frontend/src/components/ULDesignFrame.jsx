@@ -27,7 +27,13 @@ const ULDesignFrame = () => {
       style: {
         backgroundColor: "black",
         borderRadius: "10px 10px",
+        borderStyle: "solid",
+        borderColor: "black",
+        borderWidth: "1px",
       },
+      text: {
+        content: "text",
+      }
     };
   };
   const pElements = useState({});

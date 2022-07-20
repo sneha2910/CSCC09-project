@@ -1,18 +1,62 @@
-import { Button, Stack } from 'react-bootstrap';
+import { Button, Stack } from "react-bootstrap";
+import ULDesignElementPanelItem from "./ULDesignElementPanelItem";
+import { toKebabCase } from "../utils/utils.js";
 
 const ULDesignElementPanel = (props) => {
   const { element, updateElement } = props;
 
-  const setColor = () => {
-    const color = document.getElementById("ul-design-element-panel-color").value;
-    updateElement(element, { style: { backgroundColor: color } });
-  }
-  return ( element &&
-    <Stack className="h-100 w-25 border position-relative">
-      <div>The current element is {element.id}</div>
-      <input id="ul-design-element-panel-color" type="input" placeholder='color'></input>
-      <Button variant="primary" onClick={setColor}>set colour</Button>
-    </Stack>
+  const getSetter = (toUpdateObject) => (value) => {
+    updateElement(element, toUpdateObject(value));
+  };
+
+  const minDim = (() => {
+    if (!element) return 0;
+    const { position } = element;
+    return Math.min(parseInt(position.width), parseInt(position.height));
+  })();
+
+  return (
+    element && (
+      <Stack className="h-100 w-25 border position-relative">
+        <div>The current element is {element.id}</div>
+        <ULDesignElementPanelItem
+          type="color"
+          name="Fill Color"
+          value={element.style.backgroundColor}
+          update={getSetter((value) => ({
+            style: { backgroundColor: value },
+          }))}
+        />
+        <ULDesignElementPanelItem
+          type="range"
+          min="0"
+          max={minDim / 2}
+          name="Border Width"
+          value={parseInt(element.style.borderWidth)}
+          update={getSetter((value) => ({
+            style: { borderWidth: value + "px" },
+          }))}
+        />
+        <ULDesignElementPanelItem
+          type="color"
+          name="Border Color"
+          value={element.style.borderColor}
+          update={getSetter((value) => ({
+            style: { borderColor: value },
+          }))}
+        />
+        <ULDesignElementPanelItem
+          type="range"
+          min="0"
+          max={minDim / 2}
+          name="Border Radius"
+          value={parseInt(element.style.borderRadius)}
+          update={getSetter((value) => ({
+            style: { borderRadius: value + "px" },
+          }))}
+        />
+      </Stack>
+    )
   );
 };
 

@@ -18,7 +18,13 @@ const ULDesignElement = (props) => {
     }
   };
   const getElementStyle = (element) => {
-    return element.style;
+    return {
+      ...element.style,
+      userSelect: "none",
+    };
+  };
+  const getElementContent = (element) => {
+    return element.text.content;
   };
 
   const onMouseDown = (e) => {
@@ -48,7 +54,7 @@ const ULDesignElement = (props) => {
         style={getElementStyle(element)}
         onMouseDown={onMouseDown}
       >
-        {element.content}
+        {getElementContent(element)}
       </div>
       {isSelected &&
         ["tl", "tr", "bl", "br"].map((handlePos) => {
