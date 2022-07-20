@@ -3,10 +3,10 @@ import { Card } from "react-bootstrap";
 import defaultDocument from "../media/document.png";
 import { Link } from "react-router-dom";
 
-const ULProjectCover = (props) => {
+const ULFrameCover = (props) => {
   return (
     <Card className="col-2">
-      <Link to={`/project?project=${props.name}`}>
+      <Link to={`/design?project=${props.project}&frame=${props.name}`}>
         <Card.Img variant="top" src={defaultDocument} />
         <Card.Body>
           <Card.Title>{props.name}</Card.Title>
@@ -16,4 +16,4 @@ const ULProjectCover = (props) => {
   );
 };
 
-export default ULProjectCover;
+export default ULFrameCover;
