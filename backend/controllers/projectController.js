@@ -28,7 +28,7 @@ const createFrame = async (req, res) => {
         if(!title || !height || !width) {
             return res.status(404).json({error: "Please enter all parameters!"});
         }
-        let project = await Projects.findOne({ _id: projectId });
+        let project = await Projects.findOne({ title: projectId });
         if (!project){
             return res.status(400).json({error: "project does not exist!"});
         }
@@ -39,7 +39,8 @@ const createFrame = async (req, res) => {
         }
         project.frames.push({title, height, width});
         await project.save();
-        res.status(200).json({message: "Frame created successfully!"});
+        res.status(200).json({message: "Frame created successfully!",
+                            frame: {title, height, width}});
 
     }catch (err) {
         res.status(400).json({error: err.message});
@@ -52,17 +53,17 @@ const createElement = async (req, res) => {
     const element = req.body;
     
     try{
-        let project = await Projects.findOne({ _id: projectId });
+        let project = await Projects.findOne({ title: projectId });
         if (!project){
             return res.status(400).json({error: "project does not exist!"});
         }
 
-        let frame = project.frames.find(frame => frame._id == frameId);
+        let frame = project.frames.find(frame => frame.title == frameId);
         if (!frame) {
             return res.status(400).json({error: "frame does not exist!"});
         }
 
-        let index = project.frames.findIndex(frame => frame._id == frameId);
+        let index = project.frames.findIndex(frame => frame.title == frameId);
         project.frames[index].elements.push({content: element});
         await project.save();
         res.status(200).json({message: "Element created successfully!"});
@@ -77,7 +78,7 @@ const getProjects = async (req, res) => {
     
     try{
         let projects = await Projects.find({}, { title: 1, _id: 0 });
-        res.status(200).json(projects);
+        res.status(200).json({status: "success", projects});
     }catch(err) {
         res.status(400).json({error: err.message});
     }
@@ -99,9 +100,12 @@ const getProject = async (req, res) => {
 const getFrames = async (req, res) => {
     const projectId = req.params.projectId;
     try{
-        let project = await Projects.findOne({_id: projectId});
+        let project = await Projects.findOne({title: projectId});
         if(!project) return res.status(400).json({error: "project does not exist!"});
-        res.status(200).json(project.frames);
+        res.status(200).json({
+            status: "success",
+            frames: project.frames,
+        });
         
     }catch(err) {
         res.status(400).json({error: err.message});
@@ -135,17 +139,20 @@ const getElements = async (req, res) => {
     const frameId = req.params.frameId;
 
     try{
-        let project = await Projects.findOne({_id: projectId});
+        let project = await Projects.findOne({title: projectId});
         if(!project){
             return res.status(400).json({error: "project does not exist!"});
         } 
 
-        let frame = project.frames.find(frame => frame._id == frameId);
+        let frame = project.frames.find(frame => frame.title == frameId);
         if (!frame) {
             return res.status(400).json({error: "frame does not exist!"});
         }
 
-        res.status(200).json(frame.elements);
+        res.status(200).json({
+            status: "success",
+            elements: frame.elements,
+        });
         
     }catch(err) {
         res.status(400).json({error: err.message});
@@ -172,7 +179,7 @@ const getElement = async (req, res) => {
         if (!element) {
             return res.status(400).json({error: "element does not exist!"});
         }
-        res.status(200).json(element.content);
+        res.status(200).json(element);
 
     }catch(err) {
         res.status(400).json({error: err.message});
@@ -221,24 +228,24 @@ const deleteElement = async (req, res) => {
     const frameId = req.params.frameId;
     const elementId = req.params.elementId;
     try{
-        let project = await Projects.findOne({ _id: projectId });
+        let project = await Projects.findOne({ title: projectId });
         if (!project){
             return res.status(400).json({error: "project does not exist!"});
         }
 
-        let frame = project.frames.find(frame => frame._id == frameId);
+        let frame = project.frames.find(frame => frame.title == frameId);
         if (!frame) {
             return res.status(400).json({error: "frame does not exist!"});
         }
 
-        let index = project.frames.findIndex(frame => frame._id == frameId);
+        let index = project.frames.findIndex(frame => frame.title == frameId);
         let element = project.frames[index].elements.find(element => element._id == elementId);
         if (!element) {
             return res.status(400).json({error: "element does not exist!"});
         }
 
         let i = project.frames[index].elements.findIndex(element => element._id == elementId);
-        project.frames[index].elements.splice(i);
+        project.frames[index].elements.splice(i, 1);
         project.save();
         res.status(200).json({message: "Element deleted!"});
 
@@ -320,15 +327,15 @@ const updateElement = async (req, res) => {
             res.status(400).json({error: "Please provide all parameters"});
         }
         
-        let project = await Projects.findOne({_id: projectId});
+        let project = await Projects.findOne({title: projectId});
         if(!project) return res.status(400).json({error: "project does not exist!"});
         
-        let frame = project.frames.find(frame => frame._id == frameId);
+        let frame = project.frames.find(frame => frame.title == frameId);
         if (!frame) {
             return res.status(400).json({error: "frame does not exist!"});
         }
 
-        let index = project.frames.findIndex(frame => frame._id == frameId);
+        let index = project.frames.findIndex(frame => frame.title == frameId);
         let element = project.frames[index].elements.find(element => element._id == elementId);
         if (!element) {
             return res.status(400).json({error: "element does not exist!"});

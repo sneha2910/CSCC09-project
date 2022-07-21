@@ -5,10 +5,6 @@ const { OAuth2Client } = require('google-auth-library')
 const client = new OAuth2Client(process.env.CLIENT_ID)
 const cookie = require('cookie');
 
-const isAuthenticated = function(req, res, next) {
-    if (!req.username) return res.status(401).end("access denied");
-    next();
-};
 
 const signupUser = async (req, res) => {
     let {username, email, password} = req.body;

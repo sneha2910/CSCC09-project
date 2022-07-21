@@ -3,14 +3,15 @@ import { Stack, Button } from "react-bootstrap";
 import { BsPlus, BsTrash } from "react-icons/bs";
 import ULDesignCanvas from "./ULDesignCanvas";
 import { useState } from "react";
-import apiService from "../services/localApiService.js";
+import apiService from "../services/apiService.js";
 import { useEffect } from "react";
 import ULDesignElementPanel from "./ULDesignElementPanel";
 
 const ULDesignFrame = () => {
   /* Get the name of the file from the URL */
   const [searchParams] = useSearchParams();
-  const filename = searchParams.get("file");
+  const fileName = searchParams.get("project");
+  const frameName = searchParams.get("frame");
 
   /* State elements: all elements in this document. */
   const generateExampleElement = () => {
@@ -25,17 +26,17 @@ const ULDesignFrame = () => {
         height: "28px",
       },
       style: {
-        backgroundColor: "#0a95ff",
-        borderRadius: "10px 10px",
+        backgroundColor: "#ffffff",
+        borderRadius: "1px",
         borderStyle: "solid",
-        borderColor: "#6cbfff",
-        borderWidth: "1px",
+        borderColor: "#000000",
+        borderWidth: "2px",
       },
       text: {
-        content: "submit",
+        content: "",
         fontSize: "16px",
-        color: "#f9fcff",
-      }
+        color: "#000000",
+      },
     };
   };
   const pElements = useState({});
@@ -44,6 +45,8 @@ const ULDesignFrame = () => {
   /* State selectedElement: the element that is selected by the current user. */
   const pSelectedElement = useState(null);
   const [selectedElement, setSelectedElement] = pSelectedElement;
+
+  const [updateTask, setUpdateTask] = useState({});
 
   const updateElement = (element, updateObject) => {
     console.log("update:", element, updateObject);
@@ -55,8 +58,19 @@ const ULDesignFrame = () => {
       };
     }
 
+    if (updateTask[element.id]) {
+      clearTimeout(updateTask[element.id]);
+    }
+    setUpdateTask(
+      {
+        ...updateTask,
+        [element.id]: setTimeout(() => {
+          apiService.updateElement(fileName, frameName, element.id, newObject);
+        }, 100),
+      }
+    );
+
     setElements({ ...elements, [element.id]: newObject });
-    apiService.updateElement(filename, newObject);
   };
 
   const updatePosition = (element, updateObject) => {
@@ -64,27 +78,58 @@ const ULDesignFrame = () => {
   };
 
   /* Connect to api service */
+  const getElements = () => {
+    return apiService
+      .getElements(fileName, frameName)
+      .then((retn) => {
+        const elementsObject = retn.elements.reduce((obj, element) => {
+          const newElement = element.content;
+          newElement.id = element._id;
+          obj[newElement.id] = newElement;
+          return obj;
+        }, {});
+        console.log("get elements:", elementsObject);
+        setElements(elementsObject);
+      })
+      .catch((error) => {
+        console.log("get elements failed:", error);
+      });
+  };
   const createElement = () => {
     console.log("add element");
     const newElement = generateExampleElement();
-    setElements({ ...elements, [newElement.id]: newElement });
-    apiService.createElement(filename, newElement);
+    apiService
+      .createElement(fileName, frameName, newElement)
+      .then(getElements)
+      .then(() => {
+        setSelectedElement(newElement);
+      })
+      .catch((error) => {
+        console.log("create element failed:", error);
+      });
   };
   const deleteElement = () => {
     console.log("delete element");
-    const { [selectedElement]: deletedElement, ...newElements } = elements;
-    setElements(newElements);
+    
+    clearTimeout(updateTask[selectedElement.id]);
     setSelectedElement(null);
-    apiService.deleteElement(filename, selectedElement);
+    const newElements = { ...elements };
+    delete newElements[selectedElement.id];
+    setElements(newElements);
+
+
+    apiService
+      .deleteElement(fileName, frameName, selectedElement)
+      .then(getElements)
+      .catch((error) => {
+        console.log("delete element failed:", error);
+      });
   };
 
   /* When the dom is loaded, get the elements from the server. */
   useEffect(() => {
-    apiService.getElements(filename).then((elements) => {
-      console.log("get elements", elements);
-      setElements(elements);
-    });
-  }, [filename, setElements]);
+    getElements();
+  }, []);
 
   /* Properties of the states */
   const properties = {

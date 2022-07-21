@@ -17,23 +17,28 @@ const { createProject,
 
 const router = express.Router();
 
-router.post('/', createProject);
-router.post('/:projectId/', createFrame);
-router.post('/:projectId/frames/:frameId/', createElement);
+const isAuthenticated = function(req, res, next) {
+    if (!req.session.username) return res.status(401).end("access denied");
+    next();
+};
 
-router.get('/', getProjects);
-router.get('/:projectId/', getProject);
-router.get('/:projectId/frames/', getFrames);
-router.get('/:projectId/frames/:frameId/', getFrame);
-router.get('/:projectId/frames/:frameId/elements/', getElements);
-router.get('/:projectId/frames/:frameId/elements/:elementId', getElement);
+router.post('/', isAuthenticated, createProject);
+router.post('/:projectId/frames/', isAuthenticated, createFrame);
+router.post('/:projectId/frames/:frameId/elements', isAuthenticated, createElement);
 
-router.delete('/:projectId/', deleteProject);
-router.delete('/:projectId/frames/:frameId/', deleteFrame);
-router.delete('/:projectId/frames/:frameId/elements/:elementId', deleteElement);
+router.get('/', isAuthenticated, getProjects);
+router.get('/:projectId/', isAuthenticated, getProject);
+router.get('/:projectId/frames/', isAuthenticated, getFrames);
+router.get('/:projectId/frames/:frameId/', isAuthenticated, getFrame);
+router.get('/:projectId/frames/:frameId/elements/', isAuthenticated, getElements);
+router.get('/:projectId/frames/:frameId/elements/:elementId', isAuthenticated, getElement);
 
-router.patch('/:projectId/', updateProject);
-router.patch('/:projectId/frames/:frameId/', updateFrame);
-router.put('/:projectId/frames/:frameId/elements/:elementId', updateElement);
+router.delete('/:projectId/', isAuthenticated, deleteProject);
+router.delete('/:projectId/frames/:frameId/', isAuthenticated, deleteFrame);
+router.delete('/:projectId/frames/:frameId/elements/:elementId', isAuthenticated, deleteElement);
+
+router.patch('/:projectId/', isAuthenticated, updateProject);
+router.patch('/:projectId/frames/:frameId/', isAuthenticated, updateFrame);
+router.put('/:projectId/frames/:frameId/elements/:elementId', isAuthenticated, updateElement);
 
 module.exports = router;

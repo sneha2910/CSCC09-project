@@ -1,3 +1,3 @@
-import ServerApi from "./serverApiService";
+import serverApiService from "./serverApiService";
 
-export default ServerApi;
+export default serverApiService;
