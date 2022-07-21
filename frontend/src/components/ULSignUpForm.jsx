@@ -40,7 +40,7 @@ export function  ULSignUpForm(props) {
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="formBasicCheckbox">
-        <Form.Check type="checkbox" label="By creating an account, I agree to The UI Lab's TOS" />
+        <Form.Check type="checkbox" label="By creating an account, I agree to The UI Lab's TOS" required/>
         <Link target="_blank"to="/TOSPage">TOS</Link>
       </Form.Group>
 

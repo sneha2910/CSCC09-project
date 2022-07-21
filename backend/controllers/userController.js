@@ -1,11 +1,8 @@
 const Users = require('../models/userModel');
 const saltRounds = 10;
 const bcrypt = require('bcrypt');
-
-const isAuthenticated = function(req, res, next) {
-    if (!req.username) return res.status(401).end("access denied");
-    next();
-};
+const { OAuth2Client } = require('google-auth-library')
+const client = new OAuth2Client(process.env.CLIENT_ID)
 
 const signupUser = async (req, res) => {
     let {username, email, password} = req.body;
@@ -40,7 +37,7 @@ const signinUser = async (req, res) => {
     }
 
     try {   
-        let user = await User.findOne({ username: username });
+        let user = await Users.findOne({ username: username });
         if (!user) return res.status(401).json("access denied");
 
         let result = await bcrypt.compare(password, user.password);
@@ -52,7 +49,54 @@ const signinUser = async (req, res) => {
     }
 };
 
-const signoutUser = function (req, res) {
+const authGoogle = async (req, res) => {
+// server.post("/api/v1/auth/google", async (req, res) => {
+//     const { token }  = req.body
+//     const ticket = await client.verifyIdToken({
+//         idToken: token,
+//         audience: process.env.CLIENT_ID
+//     });
+//     const { username, email, picture } = ticket.getPayload();    
+    // const user = await db.user.upsert({ 
+    //     where: { email: email },
+    //     update: { name, picture },
+    //     create: { name, email, picture }
+    // })
+    const { token }  = req.body
+     const ticket = await client.verifyIdToken({
+         idToken: token,
+         audience: process.env.CLIENT_ID
+     });
+     const { username, email, picture } = ticket.getPayload(); 
+
+    try {
+        
+        let user = await Users.findOne({ email: email });
+        if (user){
+            await Users.updateOne({ email: email }, {$push: { username: username }}, (err, res) => {
+            res.status(200).json({message: "Oauth User exist and updated!"});
+            req.session.userId = user.id
+            console.log(res);
+        });
+        }
+        else{
+        user = await Users.create({username, email});
+        res.status(200).json({message: "Oauth User added successfully!"});
+        
+        req.session.userId = user.id
+
+        res.status(201)
+        res.json(user)
+        }
+
+    } catch (err) {
+        res.status(400).json({error: err.message});
+        console.log(err);
+    }
+};
+
+
+const signoutUser = (isAuthenticated) = function (req, res) {
     req.session.username = "";
     res.redirect("/");
 };
@@ -60,5 +104,6 @@ const signoutUser = function (req, res) {
 module.exports = {
     signupUser,
     signinUser,
-    signoutUser
+    signoutUser,
+    authGoogle
 };
