@@ -247,6 +247,104 @@ const deleteElement = async (req, res) => {
     }
 };
 
+
+//put/patch methods
+const updateProject = async (req, res) => {
+    const projectId = req.params.projectId;
+    const title = req.body.title;
+    try{
+        if(!title){
+            res.status(400).json({error: "Please provide new title"});
+        }
+        let project = await Projects.findOneAndUpdate({_id: projectId}, {$set:{title: title}});
+        if(!project) return res.status(400).json({error: "project does not exist!"});
+
+        res.status(200).json({message: "Project title updated!"});
+        
+    }catch(err) {
+        res.status(400).json({error: err.message});
+    }
+};
+
+const updateFrame= async (req, res) => {
+    const projectId = req.params.projectId;
+    const frameId = req.params.frameId;
+    const attribute = req.query.attribute;
+
+    try{
+        if(!attribute || !req.body){
+            res.status(400).json({error: "Please provide all parameters"});
+        }
+        
+        let project = await Projects.findOne({_id: projectId});
+        if(!project) return res.status(400).json({error: "project does not exist!"});
+        
+        let frame = project.frames.find(frame => frame._id == frameId);
+        if (!frame) {
+            return res.status(400).json({error: "frame does not exist!"});
+        }
+
+        let index = project.frames.findIndex(frame => frame._id == frameId);
+
+        switch(attribute){
+
+            case "title":
+                project.frames[index].title = req.body.title;
+                break;
+
+            case "height":
+                project.frames[index].height = req.body.height;
+                break;
+            
+            case "width":
+                project.frames[index].width = req.body.width;
+                break;
+
+        }
+        
+        project.save();
+        res.status(200).json({message: "Frame updated!"});
+        
+    }catch(err) {
+        res.status(400).json({error: err.message});
+    }
+};
+
+const updateElement = async (req, res) => {
+    const projectId = req.params.projectId;
+    const frameId = req.params.frameId;
+    const elementId = req.params.elementId
+    const content = req.body.content;
+    try{
+        if(!content){
+            res.status(400).json({error: "Please provide all parameters"});
+        }
+        
+        let project = await Projects.findOne({_id: projectId});
+        if(!project) return res.status(400).json({error: "project does not exist!"});
+        
+        let frame = project.frames.find(frame => frame._id == frameId);
+        if (!frame) {
+            return res.status(400).json({error: "frame does not exist!"});
+        }
+
+        let index = project.frames.findIndex(frame => frame._id == frameId);
+        let element = project.frames[index].elements.find(element => element._id == elementId);
+        if (!element) {
+            return res.status(400).json({error: "element does not exist!"});
+        }
+
+
+        let i = project.frames[index].elements.findIndex(element => element._id == elementId);
+        project.frames[index].elements[i].content = content;
+        project.save();
+        res.status(200).json({message: "Element updated!"});
+        
+    }catch(err) {
+        res.status(400).json({error: err.message});
+    }
+};
+
 module.exports = {
     createProject,
     createFrame,
@@ -259,5 +357,8 @@ module.exports = {
     getElement,
     deleteProject,
     deleteFrame,
-    deleteElement
+    deleteElement,
+    updateProject,
+    updateFrame,
+    updateElement
 };
