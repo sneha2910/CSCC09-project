@@ -32,8 +32,8 @@ router.get('/:projectId/frames/:frameId/elements/:elementId', getElement);
 // router.patch('/:projectId/frames/:frameId/', updateFrameTitle);
 // router.put('/:projectId/frames/:frameId/elements/:elementId', updateElement);
 
-// router.delete('/:projectId/', deleteProject);
-// router.delete('/:projectId/frames/:frameId/', deleteFrame);
-// router.delete('/:projectId/frames/:frameId/elements/:elementId', deleteElement);
+router.delete('/:projectId/', deleteProject);
+router.delete('/:projectId/frames/:frameId/', deleteFrame);
+router.delete('/:projectId/frames/:frameId/elements/:elementId', deleteElement);
 
 module.exports = router;
