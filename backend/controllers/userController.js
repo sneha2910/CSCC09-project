@@ -3,10 +3,6 @@ const saltRounds = 10;
 const bcrypt = require('bcrypt');
 const cookie = require('cookie');
 
-const isAuthenticated = function(req, res, next) {
-    if (!req.username) return res.status(401).end("access denied");
-    next();
-};
 
 const signupUser = async (req, res) => {
     let {username, email, password} = req.body;

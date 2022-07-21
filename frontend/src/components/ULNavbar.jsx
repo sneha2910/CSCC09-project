@@ -15,11 +15,11 @@ const ULNavbar = () => {
     signOut()
       .then(() => {
         console.log("Logged out!");
-        navigate("/");
+        navigate("/login");
       })
       .catch((err) => {
         console.log(err);
-        navigate("/");
+        navigate("/login");
       });
   };
   return (

@@ -11,7 +11,7 @@ import ULHomepage from './routes/ULHomepage';
 import ULCredits from './routes/ULCredits';
 import ULDesign from './routes/ULDesign';
 import ULProject from './routes/ULProject';
-import {UserContextProvider} from './contexts/UserContext';
+import { UserContextProvider, UserContext } from './contexts/UserContext';
 
 function App() {
   /* Parse the cookie and get the current user */
