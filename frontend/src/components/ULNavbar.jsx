@@ -39,7 +39,7 @@ const ULNavbar = () => {
         </Button>
       ) : (
         <Button className="d-flex">
-          <Link to="/Login">Log in</Link>
+          <Link to="/Login" className="text-light">Log in</Link>
         </Button>
       )}
     </Navbar>
