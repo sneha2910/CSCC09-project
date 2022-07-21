@@ -35,7 +35,7 @@ const ULDesignFrame = () => {
       text: {
         content: "",
         fontSize: "16px",
-        color: "#f9fcff",
+        color: "#000000",
       },
     };
   };
