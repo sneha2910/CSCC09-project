@@ -1,6 +1,25 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const elementSchema = new Schema({
+    content : {
+        type: Object
+    }
+}, {timestampData: true});
+
+const frameSchema = new Schema({
+    title: {
+        type: String
+    },
+    height: {
+        type: String
+    },
+    width: {
+        type: String
+    },
+    elements:[elementSchema],
+}, {timestampData: true});
+
 const projectSchema = new Schema({
     title: {
         type: String,
@@ -8,26 +27,6 @@ const projectSchema = new Schema({
     },
     frames: [frameSchema]
 }, {timestamps: true});
-
-const frameSchema = new Schema({
-    title: {
-        type: String,
-        required: true
-    },
-    height: {
-        type: String,
-        required: true
-    },
-    width: {
-        type: String,
-        required: true
-    },
-    elements:[elementSchema],
-}, {timestampData: true});
-
-const elementSchema = new Schema({
-    type : Object
-}, {timestampData: true});
 
 
 // const positionSchema = new Schema({
@@ -81,4 +80,6 @@ const elementSchema = new Schema({
 //     }
 // });
 
-module.exports = mongoose.model('Projects', projectSchema);
+const Projects = mongoose.model('Projects', projectSchema);
+
+module.exports = {Projects};

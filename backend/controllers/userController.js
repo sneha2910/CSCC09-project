@@ -1,4 +1,4 @@
-const User = require('../models/userModel');
+const Users = require('../models/userModel');
 const saltRounds = 10;
 const bcrypt = require('bcrypt');
 
@@ -20,17 +20,16 @@ const signupUser = async (req, res) => {
 
     try {
         
-        let user = await User.findOne({ username: username });
+        let user = await Users.findOne({ username: username });
         if (user){
             return res.status(409).json({error: "username " + username + " already exists"});
         }
 
-        user = await User.create({username, email, password});
+        user = await Users.create({username, email, password});
         res.status(200).json({message: "User added successfully!"});
 
     } catch (err) {
         res.status(400).json({error: err.message});
-        console.log(err);
     }
 };
 
@@ -53,7 +52,7 @@ const signinUser = async (req, res) => {
     }
 };
 
-const signoutUser = (isAuthenticated) = function (req, res) {
+const signoutUser = function (req, res) {
     req.session.username = "";
     res.redirect("/");
 };
