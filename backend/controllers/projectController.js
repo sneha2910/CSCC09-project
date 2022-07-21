@@ -179,7 +179,73 @@ const getElement = async (req, res) => {
     }
 };
 
+//delete methods
+const deleteProject = async (req, res) => {
+    const projectId = req.params.projectId;
+    try{
+        let project = await Projects.findOne({_id: projectId});
+        if(!project) return res.status(400).json({error: "project does not exist!"});
+        
+        await Projects.remove({_id : projectId});  
+        return res.status(200).json({message: "Project deleted!"});
+        
+    }catch(err) {
+        res.status(400).json({error: err.message});
+    }
+};
 
+const deleteFrame = async (req, res) => {
+    const projectId = req.params.projectId;
+    const frameId = req.params.frameId;
+
+    try{
+        let project = await Projects.findOne({_id: projectId});
+        if(!project) return res.status(400).json({error: "project does not exist!"});
+        
+        let frame = project.frames.find(frame => frame._id == frameId);
+        if (!frame) {
+            return res.status(400).json({error: "frame does not exist!"});
+        }
+
+        let index = project.frames.findIndex(frame => frame._id == frameId);
+        project.frames.splice(index);
+        project.save();
+        res.status(200).json({message: "Frame deleted!"});
+    }catch(err) {
+        res.status(400).json({error: err.message});
+    }
+};
+
+const deleteElement = async (req, res) => {
+    const projectId = req.params.projectId;
+    const frameId = req.params.frameId;
+    const elementId = req.params.elementId;
+    try{
+        let project = await Projects.findOne({ _id: projectId });
+        if (!project){
+            return res.status(400).json({error: "project does not exist!"});
+        }
+
+        let frame = project.frames.find(frame => frame._id == frameId);
+        if (!frame) {
+            return res.status(400).json({error: "frame does not exist!"});
+        }
+
+        let index = project.frames.findIndex(frame => frame._id == frameId);
+        let element = project.frames[index].elements.find(element => element._id == elementId);
+        if (!element) {
+            return res.status(400).json({error: "element does not exist!"});
+        }
+
+        let i = project.frames[index].elements.findIndex(element => element._id == elementId);
+        project.frames[index].elements.splice(i);
+        project.save();
+        res.status(200).json({message: "Element deleted!"});
+
+    }catch(err) {
+        res.status(400).json({error: err.message});
+    }
+};
 
 module.exports = {
     createProject,
@@ -190,5 +256,8 @@ module.exports = {
     getFrames,
     getFrame,
     getElements,
-    getElement
+    getElement,
+    deleteProject,
+    deleteFrame,
+    deleteElement
 };
