@@ -20,7 +20,7 @@ const ULDesignElementPanelItem = (props) => {
           min={min}
           max={max}
         />
-        {type === "range" && <output for={`ul-design-element-panel-${kebabName}`}>{value}</output>}
+        {type === "range" && <output htmlFor={`ul-design-element-panel-${kebabName}`}>{value}</output>}
       </label>
     </form>
   );

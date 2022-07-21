@@ -3,6 +3,7 @@ import Form from 'react-bootstrap/Form';
 import React from 'react'
 import { useRef } from 'react';
 import { Link } from "react-router-dom";
+import userService from '../services/userService.js';
 
 export function  ULSignUpForm(props) {
     const { createUser } = props;
@@ -18,7 +19,10 @@ export function  ULSignUpForm(props) {
     const username = usernameRef.current.value;
     const password = passwordRef.current.value;
 
-    createUser(email, username, password);
+    userService.signUp(email, username, password).catch(error => {
+      console.log(error);
+    });
+      
     e.target.reset();
   };
 

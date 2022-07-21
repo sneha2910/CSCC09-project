@@ -16,9 +16,9 @@ export default function ULSignUp() {
         <Row className="justify-content-md-center">
            <Col md={{ span: 6}}>
                <Stack gap={3}>
-          <text>Create an account to use The UI Lab</text>
+          Create an account to use The UI Lab
           <ULGoogleButton />
-          <text>or</text>
+          or
           <ULSignUpForm 
           createMessage={createUser}
           />

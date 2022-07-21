@@ -18,7 +18,7 @@ export default function ULLogin() {
                     <Stack gap={3}>
                         Log in to use The UI Lab
                         <ULGoogleButton />
-                        <text>or</text>
+                        or
                         <ULLoginForm 
                     createMessage={createUser}
                     />

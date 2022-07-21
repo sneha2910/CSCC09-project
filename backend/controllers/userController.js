@@ -1,6 +1,7 @@
 const Users = require('../models/userModel');
 const saltRounds = 10;
 const bcrypt = require('bcrypt');
+const cookie = require('cookie');
 
 const isAuthenticated = function(req, res, next) {
     if (!req.username) return res.status(401).end("access denied");
@@ -25,7 +26,7 @@ const signupUser = async (req, res) => {
             return res.status(409).json({error: "username " + username + " already exists"});
         }
 
-        user = await Users.create({username, email, password});
+        user = await Users.create({username, email, password, isOnline: false});
         res.status(200).json({message: "User added successfully!"});
 
     } catch (err) {
@@ -40,11 +41,16 @@ const signinUser = async (req, res) => {
     }
 
     try {   
-        let user = await User.findOne({ username: username });
+        let user = await Users.findOne({ username: username });
         if (!user) return res.status(401).json("access denied");
 
         let result = await bcrypt.compare(password, user.password);
         if (!result) return res.status(401).json("access denied");
+        req.session.username = username;
+        res.setHeader('Set-Cookie', cookie.serialize('username', username, {
+            maxAge: 60 * 60 * 24 * 7,
+            path: '/'
+        }));
         res.status(200).json({message: username + "successfully logged in!"});
     } catch (err) {
         res.status(400).json({error: err.message});
@@ -53,8 +59,12 @@ const signinUser = async (req, res) => {
 };
 
 const signoutUser = function (req, res) {
-    req.session.username = "";
-    res.redirect("/");
+    res.setHeader('Set-Cookie', cookie.serialize('username', '', {
+        maxAge: -1,
+        path: '/'
+    }));
+    req.session.destroy();
+    res.status(200).json({success: "successfully logged out!"});
 };
 
 module.exports = {

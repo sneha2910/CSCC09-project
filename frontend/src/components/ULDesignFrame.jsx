@@ -21,20 +21,20 @@ const ULDesignFrame = () => {
         position: "absolute",
         top: Math.floor(Math.random() * 400) + "px",
         left: Math.floor(Math.random() * 400) + "px",
-        width: "40px",
-        height: "40px",
+        width: "56px",
+        height: "28px",
       },
       style: {
-        backgroundColor: "black",
+        backgroundColor: "#0a95ff",
         borderRadius: "10px 10px",
         borderStyle: "solid",
-        borderColor: "black",
+        borderColor: "#6cbfff",
         borderWidth: "1px",
       },
       text: {
-        content: "text",
-        fontSize: "20px",
-        color: "white",
+        content: "submit",
+        fontSize: "16px",
+        color: "#f9fcff",
       }
     };
   };
@@ -55,7 +55,6 @@ const ULDesignFrame = () => {
       };
     }
 
-    console.log("updateElement", element, newObject);
     setElements({ ...elements, [element.id]: newObject });
     apiService.updateElement(filename, newObject);
   };
