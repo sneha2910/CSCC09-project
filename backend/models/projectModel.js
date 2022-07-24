@@ -21,6 +21,9 @@ const frameSchema = new Schema({
 }, {timestampData: true});
 
 const projectSchema = new Schema({
+    users: {
+        type: [String]
+    },
     title: {
         type: String,
         required: true

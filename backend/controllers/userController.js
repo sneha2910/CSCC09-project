@@ -1,4 +1,5 @@
 const Users = require('../models/userModel');
+const { Worker } = require('worker_threads');
 const saltRounds = 10;
 const bcrypt = require('bcrypt');
 const cookie = require('cookie');
@@ -22,6 +23,14 @@ const signupUser = async (req, res) => {
             return res.status(409).json({error: "username " + username + " already exists"});
         }
 
+        let worker = new Worker('./worker.js', {workerData: {action: 'signup', username: username, emails: [email]}});
+        worker.once("message", success => {
+            if (!success){
+                return res.status(400).json({error: "Email not sent!"})
+            }
+        });
+
+        worker.terminate();
         user = await Users.create({username, email, password, isOnline: false});
         res.status(200).json({message: "User added successfully!"});
 

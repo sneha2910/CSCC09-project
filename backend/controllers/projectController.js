@@ -1,4 +1,7 @@
+"use strict";
+const { Worker } = require('worker_threads');
 const {Projects} = require('../models/projectModel');
+const nodemailer = require("nodemailer");
 
 //post methods
 const createProject = async (req, res) => {
@@ -11,8 +14,8 @@ const createProject = async (req, res) => {
         if (project){
             return res.status(409).json({error: "project " + title + " already exists! Try a different name."});
         }
-
-        project = await Projects.create({title});
+        let users = [req.session.username];
+        project = await Projects.create({users, title});
         res.status(200).json({message: "Project created successfully!"});
 
     } catch (err) {
@@ -69,6 +72,27 @@ const createElement = async (req, res) => {
         res.status(200).json({message: "Element created successfully!"});
 
     }catch(err) {
+        res.status(400).json({error: err.message});
+    }
+};
+
+const addUser = async (req, res) => {
+    const projectId = req.params.projectId;
+    const username = req.body.username;
+    const email = req.body.email;
+    try {
+        if(!email || !username) {
+            return res.status(404).json({error: "Please enter all parameters!"});
+        }
+        let project = await Projects.findOne({_id: projectId});
+        if (!project){
+            return res.status(400).json({error: "project does not exist!"});
+        }
+        project.users.push(username);
+        project.save();
+        res.status(200).json({message: "Project created successfully!"});
+
+    } catch (err) {
         res.status(400).json({error: err.message});
     }
 };
@@ -181,6 +205,19 @@ const getElement = async (req, res) => {
         }
         res.status(200).json(element);
 
+    }catch(err) {
+        res.status(400).json({error: err.message});
+    }
+};
+
+const getUsers = async (req, res) => {
+    const projectId = req.params.projectId;
+    try{
+        let project = await Projects.findOne({_id: projectId});
+        if(!project) return res.status(400).json({error: "project does not exist!"});
+
+        res.status(200).json(project.users);
+        
     }catch(err) {
         res.status(400).json({error: err.message});
     }
@@ -352,6 +389,24 @@ const updateElement = async (req, res) => {
     }
 };
 
+const removeUser = async (req, res) => {
+    const projectId = req.params.projectId;
+    const username = req.query.username;
+    try{
+        let project = await Projects.findOne({_id: projectId});
+        if(!project) return res.status(400).json({error: "project does not exist!"});
+
+        let i = project.owners.findIndex(user => user == username);
+        project.users.splice(i, 1);
+        project.save();
+
+        res.status(200).json(project.users);
+        
+    }catch(err) {
+        res.status(400).json({error: err.message});
+    }
+};
+
 module.exports = {
     createProject,
     createFrame,
@@ -367,5 +422,8 @@ module.exports = {
     deleteElement,
     updateProject,
     updateFrame,
-    updateElement
+    updateElement,
+    addUser,
+    getUsers,
+    removeUser
 };
