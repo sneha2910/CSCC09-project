@@ -1,7 +1,6 @@
-"use strict";
-const { Worker } = require('worker_threads');
-const {Projects} = require('../models/projectModel');
-const nodemailer = require("nodemailer");
+const { Worker, isMainThread } = require('worker_threads');
+const Projects = require('../models/projectModel');
+const Users = require('../models/userModel');
 
 //post methods
 const createProject = async (req, res) => {
@@ -78,19 +77,38 @@ const createElement = async (req, res) => {
 
 const addUser = async (req, res) => {
     const projectId = req.params.projectId;
-    const username = req.body.username;
     const email = req.body.email;
     try {
-        if(!email || !username) {
+        if(!email) {
             return res.status(404).json({error: "Please enter all parameters!"});
         }
         let project = await Projects.findOne({_id: projectId});
         if (!project){
             return res.status(400).json({error: "project does not exist!"});
         }
-        project.users.push(username);
-        project.save();
-        res.status(200).json({message: "Project created successfully!"});
+        let user = await Users.findOne({email: email});
+        if(!user){
+            return res.status(400).json({error: "User is not registered with UI lab. Please enter valid email."});
+        }
+
+        if(project.users.includes(user.username)){
+            return res.status(400).json({error: "User already added!"});
+        }
+
+        let workerData = {action: 'add', sessionUser: "snhea", projectTitle: project.title, username: user.username, email: email};
+        let worker = new Worker('./worker.js', {workerData: workerData});
+        worker.once("message", (success) => {
+            if (!success){
+                res.status(400).json({error: "Email not sent!"});
+                worker.terminate();
+            }
+            else{
+                project.users.push(user.username);
+                project.save();
+                res.status(200).json({message: "User added successfully!"});
+                worker.terminate();
+            }
+        });
 
     } catch (err) {
         res.status(400).json({error: err.message});
@@ -357,7 +375,7 @@ const updateFrame= async (req, res) => {
 const updateElement = async (req, res) => {
     const projectId = req.params.projectId;
     const frameId = req.params.frameId;
-    const elementId = req.params.elementId
+    const elementId = req.params.elementId;
     const content = req.body.content;
     try{
         if(!content){

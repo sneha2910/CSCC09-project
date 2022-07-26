@@ -1,7 +1,7 @@
 const {parentPort, workerData} = require("worker_threads");
 const nodemailer = require('nodemailer');
 
-parentPort.postMessage(sendEmail(workerData))
+sendEmail(workerData);
 
 function sendEmail(workerData) {
     let mailInfo;
@@ -19,8 +19,8 @@ function sendEmail(workerData) {
         case 'signup': 
             mailInfo = {
                 from: '"The UI Lab" <theuilab@outlook.com>', // sender address
-                to: workerData.emails[0], // list of receivers
-                subject: "Welcome to The UI Lab!", // Subject line
+                to: workerData.email, // list of receivers
+                subject: "Welcome to The UI Lab " + workerData.username + "!",// Subject line
                 text: "Sign up succesfull! Thanks for joining The UI Lab.\n" +
                         "Welcome to the community of The UI Lab and the world of " + 
                         "creating UI for your applications.", // plain text body
@@ -30,12 +30,28 @@ function sendEmail(workerData) {
             };
             break;
 
-    };
+        case 'add':
+            mailInfo = {
+                from: '"The UI Lab" <theuilab@outlook.com>', // sender address
+                to: workerData.email, // list of receivers
+                subject: "You were added to a new project!",// Subject line
+                text: "Hi " + workerData.username + "! You were added to Project " +
+                         workerData.projectTitle +"by " + workerData.sessionUser + 
+                         "! Login to TheUILab and check it out!", // plain text body
+                html: `<b>Hi ${workerData.username}!<b><hr>
+                        You were added to Project ${workerData.projectTitle} by
+                         ${workerData.sessionUser}! Login to TheUILab and check it out!`, // html body
+            };
+            break;
 
+    }
+    
     transporter.sendMail(mailInfo, (error) => {
-        if (error) 
-            console.log(error);
+        if (error) {
+            parentPort.postMessage(false);
+        }
+        else {
+            parentPort.postMessage(true);
+        }
     });
-
-    return true;
-};
+}
