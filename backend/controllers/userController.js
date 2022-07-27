@@ -22,6 +22,11 @@ const signupUser = async (req, res) => {
             return res.status(409).json({error: "username " + username + " already exists"});
         }
 
+        user = await Users.findOne({ email: email });
+        if (user){
+            return res.status(409).json({error: "Account exists with the given email! Log In instead."});
+        }
+
         user = await Users.create({username, email, password, isOnline: false});
 
         let workerData = {action: 'signup', username: username, email: email};

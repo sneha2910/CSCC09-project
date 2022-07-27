@@ -1,4 +1,4 @@
-const { Worker, isMainThread } = require('worker_threads');
+const { Worker} = require('worker_threads');
 const Projects = require('../models/projectModel');
 const Users = require('../models/userModel');
 
@@ -91,11 +91,15 @@ const addUser = async (req, res) => {
             return res.status(400).json({error: "User is not registered with UI lab. Please enter valid email."});
         }
 
+        if(req.session.username == user.username){
+            return res.status(400).json({error: "Cannot add yourself to a project!"});
+        }
+
         if(project.users.includes(user.username)){
             return res.status(400).json({error: "User already added!"});
         }
 
-        let workerData = {action: 'add', sessionUser: "snhea", projectTitle: project.title, username: user.username, email: email};
+        let workerData = {action: 'add', sessionUser: req.session.username, projectTitle: project.title, username: user.username, email: email};
         let worker = new Worker('./worker.js', {workerData: workerData});
         worker.once("message", (success) => {
             if (!success){
@@ -117,7 +121,6 @@ const addUser = async (req, res) => {
 
 //get methods
 const getProjects = async (req, res) => {
-    
     try{
         let projects = await Projects.find({}, { title: 1, _id: 0 });
         res.status(200).json({status: "success", projects});
