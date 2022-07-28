@@ -1,5 +1,5 @@
 const socketio = require("socket.io");
-const { Projects } = require("../models/projectModel");
+const Projects = require("../models/projectModel");
 
 const toSocketMiddleware = (middleware) => (socket, next) => {
   middleware(socket.request, {}, next);
