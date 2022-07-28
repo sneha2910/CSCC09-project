@@ -23,6 +23,7 @@ const ULHomepage = () => {
         console.log("get projects failed:", error);
       });
   };
+
   const createProject = () => {
     const projectName = prompt("Enter a name for your new project");
     return apiService

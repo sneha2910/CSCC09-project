@@ -6,6 +6,9 @@ import { useState } from "react";
 import apiService from "../services/apiService.js";
 import { useEffect } from "react";
 import ULDesignElementPanel from "./ULDesignElementPanel";
+import useElementService from "../hooks/useElementService";
+import { useContext } from "react";
+import { UserContext } from "../contexts/UserContext";
 
 const ULDesignFrame = () => {
   /* Get the name of the file from the URL */
@@ -13,7 +16,13 @@ const ULDesignFrame = () => {
   const fileName = searchParams.get("project");
   const frameName = searchParams.get("frame");
 
-  /* State elements: all elements in this document. */
+
+  const es = useElementService(fileName, frameName);
+  const {
+    createElements,
+    deleteElements,
+  } = es;
+
   const generateExampleElement = () => {
     return {
       id: Math.random().toString(),
@@ -39,101 +48,12 @@ const ULDesignFrame = () => {
       },
     };
   };
-  const pElements = useState({});
-  const [elements, setElements] = pElements;
-
-  /* State selectedElement: the element that is selected by the current user. */
-  const pSelectedElement = useState(null);
-  const [selectedElement, setSelectedElement] = pSelectedElement;
-
-  const [updateTask, setUpdateTask] = useState({});
-
-  const updateElement = (element, updateObject) => {
-    console.log("update:", element, updateObject);
-    const newObject = { ...elements[element.id] };
-    for (const key in updateObject) {
-      newObject[key] = {
-        ...newObject[key],
-        ...updateObject[key],
-      };
-    }
-
-    if (updateTask[element.id]) {
-      clearTimeout(updateTask[element.id]);
-    }
-    setUpdateTask(
-      {
-        ...updateTask,
-        [element.id]: setTimeout(() => {
-          apiService.updateElement(fileName, frameName, element.id, newObject);
-        }, 100),
-      }
-    );
-
-    setElements({ ...elements, [element.id]: newObject });
-  };
-
-  const updatePosition = (element, updateObject) => {
-    return updateElement(element, { position: updateObject });
-  };
 
   /* Connect to api service */
-  const getElements = () => {
-    return apiService
-      .getElements(fileName, frameName)
-      .then((retn) => {
-        const elementsObject = retn.elements.reduce((obj, element) => {
-          const newElement = element.content;
-          newElement.id = element._id;
-          obj[newElement.id] = newElement;
-          return obj;
-        }, {});
-        console.log("get elements:", elementsObject);
-        setElements(elementsObject);
-      })
-      .catch((error) => {
-        console.log("get elements failed:", error);
-      });
-  };
   const createElement = () => {
-    console.log("add element");
     const newElement = generateExampleElement();
-    apiService
-      .createElement(fileName, frameName, newElement)
-      .then(getElements)
-      .then(() => {
-        setSelectedElement(newElement);
-      })
-      .catch((error) => {
-        console.log("create element failed:", error);
-      });
-  };
-  const deleteElement = () => {
-    console.log("delete element");
-    
-    clearTimeout(updateTask[selectedElement.id]);
-    setSelectedElement(null);
-    const newElements = { ...elements };
-    delete newElements[selectedElement.id];
-    setElements(newElements);
-
-
-    apiService
-      .deleteElement(fileName, frameName, selectedElement)
-      .then(getElements)
-      .catch((error) => {
-        console.log("delete element failed:", error);
-      });
-  };
-
-  /* When the dom is loaded, get the elements from the server. */
-  useEffect(() => {
-    getElements();
-  }, []);
-
-  /* Properties of the states */
-  const properties = {
-    pSelectedElement,
+    console.log("create element:", newElement);
+    createElements([newElement]);
   };
 
   return (
@@ -142,21 +62,14 @@ const ULDesignFrame = () => {
         <Button variant="light" onClick={createElement}>
           <BsPlus />
         </Button>
-        <Button variant="danger" onMouseDown={deleteElement}>
+        <Button variant="danger" onMouseDown={deleteElements}>
           <BsTrash />
         </Button>
       </Stack>
       <div className="flex-grow-1">
         <Stack direction="horizontal" className="h-100 w-100">
-          <ULDesignCanvas
-            content={elements}
-            properties={properties}
-            updateElement={updatePosition}
-          />
-          <ULDesignElementPanel
-            element={elements[selectedElement]}
-            updateElement={updateElement}
-          />
+          <ULDesignCanvas es={es}/>
+          <ULDesignElementPanel es={es}/>
         </Stack>
       </div>
     </Stack>

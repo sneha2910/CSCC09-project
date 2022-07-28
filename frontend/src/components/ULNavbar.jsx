@@ -7,9 +7,8 @@ import serverApiService from "../services/userService";
 import { useNavigate } from "react-router-dom";
 
 const ULNavbar = () => {
-  const { username } = useContext(UserContext);
+  const { username, signOut } = useContext(UserContext);
   const navigate = useNavigate();
-  const { signOut } = useContext(UserContext);
 
   const onClick = () => {
     signOut()

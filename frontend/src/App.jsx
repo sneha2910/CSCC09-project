@@ -11,6 +11,7 @@ import ULHomepage from './routes/ULHomepage';
 import ULCredits from './routes/ULCredits';
 import ULDesign from './routes/ULDesign';
 import ULProject from './routes/ULProject';
+import ULMonitor from './routes/ULMonitor';
 import { UserContextProvider, UserContext } from './contexts/UserContext';
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route path="/credits" element={<ULCredits />} />
         <Route path="/design" element={<ULDesign />} />
         <Route path="/project" element={<ULProject />} />
+        <Route path="/monitor" element={<ULMonitor />} />
       </Routes>
     </UserContextProvider>
   );

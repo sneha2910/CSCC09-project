@@ -18,7 +18,11 @@ const { createProject,
 const router = express.Router();
 
 const isAuthenticated = function(req, res, next) {
-    if (!req.session.username) return res.status(401).end("access denied");
+    if (!req.session.username) return res.status(401).json({
+        status: 'error',
+        message: 'Unauthorized',
+        code: 401,
+    });
     next();
 };
 

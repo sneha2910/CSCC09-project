@@ -1,53 +1,133 @@
-const ws = require("ws");
+const socketio = require("socket.io");
+const { Projects } = require("../models/projectModel");
+
+const toSocketMiddleware = (middleware) => (socket, next) => {
+  middleware(socket.request, {}, next);
+};
+
+const joinRoom = (socket, projectName, frameName) => {
+  console.log(`${projectName}/${frameName}`)
+  socket.join(`${projectName}/${frameName}`);
+};
+const leaveRoom = (socket) => {
+  socket.leaveAll();
+};
 
 module.exports = (server, sessionParser) => {
-  const wsServer = new ws.Server({
-    noServer: true,
-    path: "/api/ws",
+  const io = socketio(server, {
+    cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST", "OPTIONS"],
+      allowedHeaders: ["my-custom-header"],
+      credentials: true,
+    },
   });
 
-  server.on("upgrade", (request, socket, head) => {
-    sessionParser(request, {}, () => {
-      if (request.session.username) {
-        wsServer.handleUpgrade(request, socket, head, (ws) => {
-          wsServer.emit("connection", ws, request);
-        });
-      } else {
-        socket.destroy();
-      }
-    });
-  });
+  /* Store user selection in memory here */
+  const userSelection = new Map();
 
-  wsServer.on("connection", (conn, request) => {
-    console.log("websocket connected");
-    if (!request.session.username) {
-      conn.send(
-        JSON.stringify({
-          type: "error",
-          message: "access denied",
-        })
-      );
-      conn.close();
-      console.log("websocket closed");
-      return;
+  io.use(toSocketMiddleware(sessionParser));
+  /* Only allow authenticated users to join the socket */
+  io.use((socket, next) => {
+    const session = socket.request.session;
+    if (session && session.username) {
+      next();
+    } else {
+      next(new Error("Log in required"));
     }
-    conn.username = request.session.username;
-    conn.isOnline = true;
-    conn.send(
-      JSON.stringify({
-        type: "user-connected",
-        username: conn.username,
-      })
-    );
-    conn.on("message", (message) => {
-      try {
-        const data = JSON.parse(message);
-        console.log('data received: ', data);
-      } catch (err) {
-        conn.close();
-      }
+  });
+
+  io.on("connection", (socket) => {
+    console.log(`User ${socket.request.session.username} connected`);
+    socket.on("joinRoom", (data) => {
+      const { projectName, frameName } = data;
+      joinRoom(socket, projectName, frameName);
+      const currentFrameSelection =
+        userSelection.get(`${projectName}/${frameName}`) ?? new Map();
+        console.log(currentFrameSelection);
+        Array.from(currentFrameSelection.entries()).forEach(([username, selection]) => {
+          socket.emit("updateSelection", {
+            username,
+            selection,
+          });
+        });
+    });
+    socket.on("leaveRoom", () => {
+      leaveRoom(socket);
+    });
+
+    const updateSelection = (data) => {
+      const { projectName, frameName, elementIds } = data;
+      const username = socket.request.session.username;
+      const frameSelection =
+        userSelection.get(`${projectName}/${frameName}`) ?? new Map();
+      frameSelection.set(username, new Set(elementIds));
+
+      socket.to(`${projectName}/${frameName}`).emit("updateSelection", {
+        username,
+        elementIds,
+      });
+    };
+    socket.on("updateSelection", updateSelection);
+
+    const updateElements = (data) => {
+      const { elements, fileName, frameName } = data;
+      Projects.findOne({ title: fileName }).then((project) => {
+        const frame = project.frames.find((frame) => frame.title === frameName);
+        if (!frame) {
+          return Promise.reject("Frame not found");
+        }
+
+        elements.forEach((elm) => {
+          const existingElement = frame.elements.find(
+            (element) => elm.id === element.content.id
+          );
+          if (existingElement) {
+            existingElement.content = elm;
+          } else {
+            frame.elements.push({ content: elm });
+          }
+        });
+        return project.save().then(() => {
+          console.log("Elements updated", socket.rooms);
+          return socket.broadcast
+            .to(`${fileName}/${frameName}`)
+            .emit("updateElements", { elements });
+        });
+      }).catch((err) => {
+        console.log(err);
+      });
+    };
+    socket.on("updateElements", updateElements);
+
+    const deleteElements = (data) => {
+      const { elementIds, fileName, frameName } = data;
+      Projects.findOne({ title: fileName })
+        .then((project) => {
+          let frame = project.frames.find((frame) => frame.title === frameName);
+          if (!frame) {
+            return Promise.reject("Frame not found");
+          }
+          console.log(elementIds);
+          frame.elements = frame.elements.filter(
+            (element) => !elementIds.includes(element.id)
+          );
+          return project.save().then(() => {
+            return socket.broadcast
+              .to(`${fileName}/${frameName}`)
+              .emit("deleteElements", { elementIds });
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+    socket.on("deleteElements", deleteElements);
+
+    socket.onAny((event, ...args) => {
+      console.log(event, args);
     });
   });
 
-  return wsServer;
+  return server;
 };

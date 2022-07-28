@@ -1,8 +1,27 @@
 import { Stack } from "react-bootstrap";
 import ULDesignElementPanelItem from "./ULDesignElementPanelItem";
+import { useContext } from "react";
+import { UserContext } from "../contexts/UserContext";
 
 const ULDesignElementPanel = (props) => {
-  const { element, updateElement } = props;
+  const { es } = props;
+  const { elements, updateElements, elementSelection } = es;
+  const { username } = useContext(UserContext);
+
+  const elementsSelectedByUser = elementSelection.get(username) ?? new Set();
+
+  const element =
+    elementsSelectedByUser.size > 0
+      ? elements.get(elementsSelectedByUser.values().next().value)
+      : null;
+
+  const updateElement = (element, updateObject) => {
+    const updateKeys = Object.keys(updateObject);
+    updateKeys.forEach((key) => {
+      element[key] = { ...element[key], ...updateObject[key] };
+    });
+    updateElements([element]);
+  };
 
   const getSetter = (toUpdateObject) => (value) => {
     updateElement(element, toUpdateObject(value));
@@ -83,6 +102,6 @@ const ULDesignElementPanel = (props) => {
       </Stack>
     )
   );
-}
+};
 
 export default ULDesignElementPanel;
