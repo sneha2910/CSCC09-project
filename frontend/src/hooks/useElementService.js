@@ -40,7 +40,7 @@ const useElementService = (fileName, frameName) => {
   useEffect(() => {
     /* On load, connect to the websocket */
     if (!websocket) {
-      const socket = io.connect("http://localhost:3000");
+      const socket = io();
 
       /* Join the room */
       socket.emit("joinRoom", {
