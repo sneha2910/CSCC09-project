@@ -111,7 +111,7 @@ const deleteElement = (projectTitle, frameTitle, elementId) =>
       elementId
   );
 
-module.exports = {
+const serverApiService = {
   signUp,
   signIn,
   signOut,
@@ -131,3 +131,5 @@ module.exports = {
   updateElement,
   deleteElement,
 };
+
+export default serverApiService;

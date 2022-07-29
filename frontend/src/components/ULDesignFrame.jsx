@@ -2,13 +2,8 @@ import { useSearchParams } from "react-router-dom";
 import { Stack, Button } from "react-bootstrap";
 import { BsPlus, BsTrash } from "react-icons/bs";
 import ULDesignCanvas from "./ULDesignCanvas";
-import { useState } from "react";
-import apiService from "../services/apiService.js";
-import { useEffect } from "react";
 import ULDesignElementPanel from "./ULDesignElementPanel";
 import useElementService from "../hooks/useElementService";
-import { useContext } from "react";
-import { UserContext } from "../contexts/UserContext";
 
 const ULDesignFrame = () => {
   /* Get the name of the file from the URL */

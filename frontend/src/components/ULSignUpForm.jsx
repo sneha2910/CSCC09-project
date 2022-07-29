@@ -6,8 +6,6 @@ import { Link } from "react-router-dom";
 import userService from '../services/userService.js';
 
 export function  ULSignUpForm(props) {
-    const { createUser } = props;
-
   const emailRef = useRef(null);
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);

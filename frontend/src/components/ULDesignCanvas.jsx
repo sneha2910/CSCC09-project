@@ -1,6 +1,5 @@
 import ULDesignElement from "../components/ULDesignElement";
-import { useState, useContext } from "react";
-import { useElementService } from "../hooks/useElementService";
+import { useContext } from "react";
 import { UserContext } from "../contexts/UserContext";
 
 const ULDesignCanvas = (props) => {
@@ -9,8 +8,6 @@ const ULDesignCanvas = (props) => {
   const {
     elements,
     elementSelection,
-    createElements,
-    deleteElements,
     updateElements,
     selectElements,
     unselectElements,

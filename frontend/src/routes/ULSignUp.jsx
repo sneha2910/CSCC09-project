@@ -8,9 +8,6 @@ import { ULGoogleButton } from "../components/ULGoogleButton";
 
 
 export default function ULSignUp() {
-    const createUser = (username, password) => {
-};
-
   return (
     <Container>
         <Row className="justify-content-md-center">
@@ -19,9 +16,7 @@ export default function ULSignUp() {
           Create an account to use The UI Lab
           <ULGoogleButton />
           or
-          <ULSignUpForm 
-          createMessage={createUser}
-          />
+          <ULSignUpForm />
           <Link to="/Login">Log in</Link> 
         </Stack>
            </Col>

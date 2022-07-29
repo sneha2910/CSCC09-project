@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Button, Container, Row } from "react-bootstrap";
 import { BsPlus, BsGear } from "react-icons/bs";
@@ -12,7 +12,7 @@ const ULProject = () => {
 
   const [frames, setFrames] = useState(null);
 
-  const getFrames = () => {
+  const getFrames = useCallback(() => {
     return apiService
       .getFrames(projectName)
       .then((retn) => {
@@ -21,7 +21,8 @@ const ULProject = () => {
       .catch((error) => {
         console.log("get frames failed:", error);
       });
-  };
+  }, [projectName]);
+
   const createFrame = () => {
     const frameName = prompt("Enter a name for your new frame");
     return apiService
@@ -33,7 +34,7 @@ const ULProject = () => {
   };
   useEffect(() => {
     getFrames();
-  }, []);
+  }, [getFrames]);
   return (
     <div>
       <ULNavbar />
@@ -55,7 +56,11 @@ const ULProject = () => {
           <Row>
             {frames &&
               frames.map((frame) => (
-                <ULFrameCover key={frame.title} project={projectName} name={frame.title} />
+                <ULFrameCover
+                  key={frame.title}
+                  project={projectName}
+                  name={frame.title}
+                />
               ))}
           </Row>
         </Container>

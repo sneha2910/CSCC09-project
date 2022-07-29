@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ULProjectCover from "../components/ULProjectCover";
 import { Button, Container, Row } from "react-bootstrap";
 import { BsPlus, BsGear } from "react-icons/bs";

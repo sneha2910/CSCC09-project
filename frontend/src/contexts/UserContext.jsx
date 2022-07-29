@@ -6,7 +6,7 @@ export const UserContext = createContext(null);
 export const UserContextProvider = (props) => {
   const getCurrentUserInCookie = () => {
     return document.cookie.replace(
-      /(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/,
+      /(?:(?:^|.*;\s*)username\s*=\s*([^;]*).*$)|^.*$/,
       "$1"
     );
   };
