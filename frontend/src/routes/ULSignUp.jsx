@@ -5,14 +5,14 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { ULSignUpForm } from "../components/ULSignUpForm";
 import { ULGoogleButton } from "../components/ULGoogleButton";
-import { loginApiService } from "../services/loginApiService";
+import userService from '../services/userService.js';
 
 
 export default function ULSignUp() {
   // Save to local storage every time the messages are changed
 
     const createUser = (username, email, password) => {
-    loginApiService.signup(username, email, password)
+    userService.signUp(username, email, password)
 };
 
   return (
