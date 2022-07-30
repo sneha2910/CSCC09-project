@@ -2,7 +2,7 @@ import { useRef } from "react";
 import ULDesignElementHandle from "./ULDesignElementHandle";
 
 const ULDesignElement = (props) => {
-  const { element, isSelected, onMouseDown } = props;
+  const { element, isSelected, onMouseDown, setMovementCb } = props;
 
   /* Reference to this element. */
   const elementRef = useRef(null);
@@ -48,6 +48,7 @@ const ULDesignElement = (props) => {
               handlePos={handlePos}
               elementRef={elementRef}
               element={element}
+              setMovementCb={setMovementCb}
             />
           );
         })}

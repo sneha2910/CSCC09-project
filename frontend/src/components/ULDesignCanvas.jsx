@@ -1,5 +1,5 @@
 import ULDesignElement from "../components/ULDesignElement";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "../contexts/UserContext";
 
 const ULDesignCanvas = (props) => {
@@ -14,6 +14,10 @@ const ULDesignCanvas = (props) => {
     unselectAllElements,
   } = props.es;
 
+  const [movementCb, setMovementCb] = useState({
+    fn: null,
+  });
+
   const selectThisElement = (element) => (e) => {
     console.log("select this element", element.id);
     const isSelected = elementSelection.get(username)?.has(element.id);
@@ -26,8 +30,8 @@ const ULDesignCanvas = (props) => {
       return;
     }
     if (!isSelected) {
-    unselectAllElements();
-    selectElements([element.id]);
+      unselectAllElements();
+      selectElements([element.id]);
     }
   };
 
@@ -35,6 +39,13 @@ const ULDesignCanvas = (props) => {
     if (e.buttons !== 1) {
       return;
     }
+
+    if (movementCb.fn) {
+      const newElement = movementCb.fn(e);
+      updateElements([newElement]);
+      return;
+    }
+
     const deltaX = e.movementX;
     const deltaY = e.movementY;
     const elementsToBeMoved = Array.from(elementSelection.get(username) ?? []);
@@ -56,10 +67,17 @@ const ULDesignCanvas = (props) => {
     }
   };
 
+  const onMouseUp = (e) => {
+    if (movementCb.fn) {
+      setMovementCb({ fn: null });
+    }
+  };
+
   return (
     <div
       className="h-100 w-100 border position-relative"
       onMouseMove={onMouseMove}
+      onMouseUp={onMouseUp}
     >
       <div className="h-100 w-100" onMouseDown={unselectAllElements}></div>
       {Array.from(elements.values()).map((element) => {
@@ -68,6 +86,9 @@ const ULDesignCanvas = (props) => {
             element={element}
             isSelected={elementSelection.get(username)?.has(element.id)}
             onMouseDown={selectThisElement(element)}
+            setMovementCb={(fn) => {
+              setMovementCb({ fn });
+            }}
             key={element.id}
           />
         );

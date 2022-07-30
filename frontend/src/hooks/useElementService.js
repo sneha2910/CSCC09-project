@@ -12,8 +12,6 @@ const useElementService = (fileName, frameName) => {
   const [websocket, setWebsocket] = useState(null);
   /* ElementsNotPushed is a set of elementIds */
   const [elementsToBePushed, setElementsToBePushed] = useState(new Set());
-  /* UpdateTask is an update task to be executed after some milliseconds */
-  const [updateTask, setUpdateTask] = useState(null);
 
   const { currentUser } = useCurrentUser();
 
@@ -77,7 +75,37 @@ const useElementService = (fileName, frameName) => {
         })
       );
     });
+
+    /* On unmount, disconnect from the websocket */
+    return () => {
+      websocket?.disconnect();
+    };
   }, [fileName, frameName, websocket]);
+
+  /* Update the elements stored on the server */
+  useEffect(() => {
+    /* Set the update task */
+    const timeoutId = setTimeout(() => {
+      if (elementsToBePushed.size === 0) {
+        return;
+      }
+      websocket.emit("updateElements", {
+        elements: Array.from(elementsToBePushed).map((elementId) => {
+          return elements.get(elementId);
+        }),
+        fileName,
+        frameName,
+      });
+      console.log("Emitted");
+      setElementsToBePushed(new Set());
+    }, 256);
+
+    /* On unmount, clear the timeout */
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [elementsToBePushed, elements, websocket, fileName, frameName]);
+
 
   /* Create an element */
   const createElements = (elements) => {
@@ -106,26 +134,6 @@ const useElementService = (fileName, frameName) => {
       });
       return newElementsToBePushed;
     });
-
-    /* Set the update task */
-    clearTimeout(updateTask);
-    setUpdateTask(
-      setTimeout(() => {
-        if (elementsToBePushed.size === 0) {
-          return;
-        }
-
-        websocket.emit("updateElements", {
-          elements: Array.from(elementsToBePushed).map((elementId) => {
-            return elements.get(elementId);
-          }),
-          fileName,
-          frameName,
-        });
-        console.log("Emitted");
-        setElementsToBePushed(new Set());
-      }, 256)
-    );
   };
   const updateSelection = (selectElementIds, unselectElementIds) => {
     setElementSelection((elementSelection) => {
