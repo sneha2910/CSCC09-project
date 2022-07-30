@@ -21,10 +21,10 @@ function sendEmail(workerData) {
                 from: '"The UI Lab" <theuilab@outlook.com>', // sender address
                 to: workerData.email, // list of receivers
                 subject: "Welcome to The UI Lab " + workerData.username + "!",// Subject line
-                text: "Sign up succesfull! Thanks for joining The UI Lab.\n" +
+                text: "Sign up successfully! Thanks for joining The UI Lab.\n" +
                         "Welcome to the community of The UI Lab and the world of " + 
                         "creating UI for your applications.", // plain text body
-                html: "<b>Sign up succesfull!<b><hr>Thanks for joining to The UI Lab.<hr>" +
+                html: "<b>Sign up successfully!<b><hr>Thanks for joining to The UI Lab.<hr>" +
                         "Welcome to the community of The UI Lab and the world of " + 
                         "creating UI for your applications.", // html body
             };
