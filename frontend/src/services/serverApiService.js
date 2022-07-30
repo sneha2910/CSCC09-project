@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/api/";
+const API_URL = "http://localhost:3001/api/";
 
 const jsonRequest = (method) => (resource, data) => {
   return fetch(API_URL + resource, {
@@ -27,6 +27,19 @@ const signIn = (username, password) =>
     username,
     password,
   });
+
+const oauth = async (token) => {
+  const response = await fetch("http://localhost:3001/api/users/auth", {
+    method: "POST",
+    body: JSON.stringify({
+      token
+    }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+  return await response.json();
+}
 
 const signOut = () => getRequest("users/signout");
 
@@ -103,6 +116,7 @@ const deleteElement = (projectTitle, frameTitle, elementId) =>
 module.exports = {
   signUp,
   signIn,
+  oauth,
   signOut,
   createProject,
   getProjects,

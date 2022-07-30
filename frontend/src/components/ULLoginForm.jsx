@@ -1,10 +1,11 @@
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { useRef, useContext } from "react";
+import { useRef, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
+import PropTypes from 'prop-types';
 
-export function ULLoginForm(props) {
+export function ULLoginForm({ setToken }) {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const navigate = useNavigate();
@@ -14,8 +15,9 @@ export function ULLoginForm(props) {
     e.preventDefault();
 
     signIn(emailRef.current.value, passwordRef.current.value)
-      .then(() => {
-        console.log("Logged in!");
+      .then((res) => {
+        console.log("Logged in!" + res);
+        setToken(res);
         /* Redirect to the homepage */
         navigate("/");
       })
@@ -47,4 +49,8 @@ export function ULLoginForm(props) {
       </Button>
     </Form>
   );
+
+}
+ULLoginForm.propTypes = {
+  setToken: PropTypes.func.isRequired
 }

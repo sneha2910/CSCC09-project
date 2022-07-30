@@ -57,43 +57,38 @@ const signinUser = async (req, res) => {
 };
 
 const authGoogle = async (req, res) => {
-// server.post("/api/v1/auth/google", async (req, res) => {
-//     const { token }  = req.body
-//     const ticket = await client.verifyIdToken({
-//         idToken: token,
-//         audience: process.env.CLIENT_ID
-//     });
-//     const { username, email, picture } = ticket.getPayload();    
-    // const user = await db.user.upsert({ 
-    //     where: { email: email },
-    //     update: { name, picture },
-    //     create: { name, email, picture }
-    // })
     const { token }  = req.body
      const ticket = await client.verifyIdToken({
          idToken: token,
          audience: process.env.CLIENT_ID
      });
-     const { username, email, picture } = ticket.getPayload(); 
-
+     const payload = ticket.getPayload();
+     const username = payload['name'];
+     const email = payload['email'];
     try {
         
         let user = await Users.findOne({ email: email });
         if (user){
-            await Users.updateOne({ email: email }, {$push: { username: username }}, (err, res) => {
-            res.status(200).json({message: "Oauth User exist and updated!"});
-            req.session.userId = user.id
+            // await Users.findOneAndUpdate({ email: email }, {$push: { username: username }});
+            req.session.username = user.username;
+            console.log("session username" + req.session.username);
+            res.setHeader('Set-Cookie', cookie.serialize('username', user.username, {
+            maxAge: 60 * 60 * 24 * 7,
+            path: '/'
+            }));
+            res.status(200).json({message: "Oath user" + user.username + "successfully logged in!"});
             console.log(res);
-        });
         }
         else{
-        user = await Users.create({username, email});
-        res.status(200).json({message: "Oauth User added successfully!"});
-        
-        req.session.userId = user.id
-
-        res.status(201)
-        res.json(user)
+        user = await Users.create({username, email, isOnline: false});
+        req.session.username = username;
+        console.log("session set" + username);
+        res.setHeader('Set-Cookie', cookie.serialize('username', username, {
+            maxAge: 60 * 60 * 24 * 7,
+            path: '/'
+        }));
+        res.status(200).json({message: "Oath user" + username + "successfully added logged in!"});
+        console.log(res);
         }
 
     } catch (err) {
