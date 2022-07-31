@@ -4,23 +4,34 @@ import userService from "../services/userService.js";
 export const UserContext = createContext(null);
 
 export const UserContextProvider = (props) => {
-  const [currentUser, setCurrentUser] = useState(null);
+  const getCurrentUserInCookie = () => {
+    return document.cookie.replace(
+      /(?:(?:^|.*;\s*)username\s*=\s*([^;]*).*$)|^.*$/,
+      "$1"
+    );
+  };
+  const [currentUser, setCurrentUser] = useState(getCurrentUserInCookie());
 
   const signIn = (email, password) => {
-    return userService.signIn(email, password).then(() => {
-      const username = document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-      setCurrentUser(username);
-    }).catch((err) => {
-      console.log(err);
-    });
+    return userService
+      .signIn(email, password)
+      .then(() => {
+        setCurrentUser(getCurrentUserInCookie());
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   const signOut = () => {
-    return userService.signOut().then(() => {
-      setCurrentUser(null);
-    }).catch((err) => {
-      console.log(err);
-      setCurrentUser(null);
-    });
+    return userService
+      .signOut()
+      .then(() => {
+        setCurrentUser(null);
+      })
+      .catch((err) => {
+        console.log(err);
+        setCurrentUser(null);
+      });
   };
 
   return (

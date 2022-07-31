@@ -20,8 +20,7 @@ export function  ULSignUpForm(props) {
     const username = usernameRef.current.value;
     const password = passwordRef.current.value;
 
-    userService.signUp(email, username, password)
-    .catch(error => {
+    userService.signUp(username, email, password).catch(error => {
       console.log(error);
     })
     .then(() => {

@@ -1,4 +1,5 @@
 const Users = require('../models/userModel');
+const { Worker } = require('worker_threads');
 const saltRounds = 10;
 const bcrypt = require('bcrypt');
 const { OAuth2Client } = require('google-auth-library')
@@ -18,14 +19,30 @@ const signupUser = async (req, res) => {
     });
 
     try {
-        
         let user = await Users.findOne({ username: username });
         if (user){
             return res.status(409).json({error: "username " + username + " already exists"});
         }
 
+        user = await Users.findOne({ email: email });
+        if (user){
+            return res.status(409).json({error: "Account exists with the given email! Log In instead."});
+        }
+
         user = await Users.create({username, email, password, isOnline: false});
-        res.status(200).json({message: "User added successfully!"});
+
+        let workerData = {action: 'signup', username: username, email: email};
+        let worker = new Worker('./worker.js', {workerData: workerData});
+        worker.once("message", (success) => {
+            if (!success){
+                res.status(400).json({error: "Email not sent!"});
+                worker.terminate();
+            }
+            else{
+                res.status(200).json({message: "User added successfully!"});
+                worker.terminate();
+            }
+        });
 
     } catch (err) {
         res.status(400).json({error: err.message});
@@ -52,7 +69,6 @@ const signinUser = async (req, res) => {
         res.status(200).json({message: username + "successfully logged in!"});
     } catch (err) {
         res.status(400).json({error: err.message});
-        console.log(err);
     }
 };
 

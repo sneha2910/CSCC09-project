@@ -21,6 +21,9 @@ const frameSchema = new Schema({
 }, {timestampData: true});
 
 const projectSchema = new Schema({
+    users: {
+        type: [String]
+    },
     title: {
         type: String,
         required: true
@@ -80,6 +83,4 @@ const projectSchema = new Schema({
 //     }
 // });
 
-const Projects = mongoose.model('Projects', projectSchema);
-
-module.exports = {Projects};
+module.exports = mongoose.model('Projects', projectSchema);

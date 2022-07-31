@@ -3,13 +3,11 @@ import { Button, Form, Navbar } from "react-bootstrap";
 import { BsSearch, BsVectorPen } from "react-icons/bs";
 import {UserContext} from "../contexts/UserContext";
 import { Link } from "react-router-dom";
-import serverApiService from "../services/userService";
 import { useNavigate } from "react-router-dom";
 
 const ULNavbar = () => {
-  const { username } = useContext(UserContext);
+  const { username, signOut } = useContext(UserContext);
   const navigate = useNavigate();
-  const { signOut } = useContext(UserContext);
 
   const onClick = () => {
     signOut()

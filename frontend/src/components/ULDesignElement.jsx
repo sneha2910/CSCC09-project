@@ -2,7 +2,7 @@ import { useRef } from "react";
 import ULDesignElementHandle from "./ULDesignElementHandle";
 
 const ULDesignElement = (props) => {
-  const { element, isSelected, onFocus, setMouseMoveCb } = props;
+  const { element, isSelected, onMouseDown, setMovementCb } = props;
 
   /* Reference to this element. */
   const elementRef = useRef(null);
@@ -28,32 +28,15 @@ const ULDesignElement = (props) => {
     return element.text.content;
   };
 
-  const onMouseDown = (e) => {
-    const { clientX: startClientX, clientY: startClientY } = e;
-    const { offsetLeft, offsetTop } = elementRef.current;
-    const mouseMoveCb = (e) => {
-      const { clientX, clientY } = e;
-      const diffX = clientX - startClientX;
-      const diffY = clientY - startClientY;
-      const newLeft = offsetLeft + diffX;
-      const newTop = offsetTop + diffY;
-      return [element, { left: `${newLeft}px`, top: `${newTop}px` }];
-    };
-    setMouseMoveCb({
-      fn: mouseMoveCb,
-    });
-  };
-
   return (
     <div
       style={getContainerStyle(element)}
       ref={elementRef}
-      onMouseDown={onFocus}
+      onMouseDown={onMouseDown}
     >
       <div
         className="h-100 w-100 d-flex align-items-center justify-content-center"
         style={getElementStyle(element)}
-        onMouseDown={onMouseDown}
       >
         {getElementContent(element)}
       </div>
@@ -65,7 +48,7 @@ const ULDesignElement = (props) => {
               handlePos={handlePos}
               elementRef={elementRef}
               element={element}
-              setMouseMoveCb={setMouseMoveCb}
+              setMovementCb={setMovementCb}
             />
           );
         })}

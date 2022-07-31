@@ -1,33 +1,76 @@
 import ULDesignElement from "../components/ULDesignElement";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { UserContext } from "../contexts/UserContext";
 
 const ULDesignCanvas = (props) => {
-  const allElements = props.content;
-  const { pSelectedElement } = props.properties;
-  const { updateElement } = props;
+  const { username } = useContext(UserContext);
 
-  /* State selectedElement: the element that is selected. */
-  const [selectedElement, setSelectedElement] = pSelectedElement;
-  const selectThisElement = (element) => () => {
+  const {
+    elements,
+    elementSelection,
+    updateElements,
+    selectElements,
+    unselectElements,
+    unselectAllElements,
+  } = props.es;
+
+  const [movementCb, setMovementCb] = useState({
+    fn: null,
+  });
+
+  const selectThisElement = (element) => (e) => {
     console.log("select this element", element.id);
-    setSelectedElement(element.id);
-  };
-  const unselectAllElements = () => {
-    console.log("unselect all elements");
-    setSelectedElement(null);
-  };
-
-  /* State mouseMoveCb: the callback function when the mouse is moving. */
-  const [mouseMoveCb, setMouseMoveCb] = useState(null);
-
-  const onMouseMove = (event) => {
-    if (mouseMoveCb?.fn) {
-      const [element, updatePositionObject] = mouseMoveCb.fn(event);
-      updateElement(element, updatePositionObject);
+    const isSelected = elementSelection.get(username)?.has(element.id);
+    if (e.ctrlKey) {
+      if (isSelected) {
+        unselectElements([element.id]);
+      } else {
+        selectElements([element.id]);
+      }
+      return;
+    }
+    if (!isSelected) {
+      unselectAllElements();
+      selectElements([element.id]);
     }
   };
-  const onMouseUp = (event) => {
-    setMouseMoveCb(null);
+
+  const onMouseMove = (e) => {
+    if (e.buttons !== 1) {
+      return;
+    }
+
+    if (movementCb.fn) {
+      const newElement = movementCb.fn(e);
+      updateElements([newElement]);
+      return;
+    }
+
+    const deltaX = e.movementX;
+    const deltaY = e.movementY;
+    const elementsToBeMoved = Array.from(elementSelection.get(username) ?? []);
+    if (elementsToBeMoved?.length > 0) {
+      updateElements(
+        elementsToBeMoved.map((elementId) => {
+          const element = elements.get(elementId);
+          const newPosition = {
+            ...element.position,
+            left: parseInt(element.position.left) + deltaX + "px",
+            top: parseInt(element.position.top) + deltaY + "px",
+          };
+          return {
+            ...element,
+            position: newPosition,
+          };
+        })
+      );
+    }
+  };
+
+  const onMouseUp = (e) => {
+    if (movementCb.fn) {
+      setMovementCb({ fn: null });
+    }
   };
 
   return (
@@ -36,14 +79,16 @@ const ULDesignCanvas = (props) => {
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
     >
-      <div className="h-100 w-100" onClick={unselectAllElements}></div>
-      {Object.values(allElements).map((element) => {
+      <div className="h-100 w-100" onMouseDown={unselectAllElements}></div>
+      {Array.from(elements.values()).map((element) => {
         return (
           <ULDesignElement
             element={element}
-            isSelected={element.id === selectedElement}
-            onFocus={selectThisElement(element)}
-            setMouseMoveCb={setMouseMoveCb}
+            isSelected={elementSelection.get(username)?.has(element.id)}
+            onMouseDown={selectThisElement(element)}
+            setMovementCb={(fn) => {
+              setMovementCb({ fn });
+            }}
             key={element.id}
           />
         );

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ULProjectCover from "../components/ULProjectCover";
 import { Button, Container, Row } from "react-bootstrap";
 import { BsPlus, BsGear } from "react-icons/bs";
@@ -23,6 +23,7 @@ const ULHomepage = () => {
         console.log("get projects failed:", error);
       });
   };
+
   const createProject = () => {
     const projectName = prompt("Enter a name for your new project");
     return apiService

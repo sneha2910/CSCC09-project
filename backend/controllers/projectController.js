@@ -1,4 +1,6 @@
-const {Projects} = require('../models/projectModel');
+const { Worker} = require('worker_threads');
+const Projects = require('../models/projectModel');
+const Users = require('../models/userModel');
 
 //post methods
 const createProject = async (req, res) => {
@@ -11,8 +13,8 @@ const createProject = async (req, res) => {
         if (project){
             return res.status(409).json({error: "project " + title + " already exists! Try a different name."});
         }
-
-        project = await Projects.create({title});
+        let users = [req.session.username];
+        project = await Projects.create({users, title});
         res.status(200).json({message: "Project created successfully!"});
 
     } catch (err) {
@@ -73,9 +75,52 @@ const createElement = async (req, res) => {
     }
 };
 
+const addUser = async (req, res) => {
+    const projectId = req.params.projectId;
+    const email = req.body.email;
+    try {
+        if(!email) {
+            return res.status(404).json({error: "Please enter all parameters!"});
+        }
+        let project = await Projects.findOne({_id: projectId});
+        if (!project){
+            return res.status(400).json({error: "project does not exist!"});
+        }
+        let user = await Users.findOne({email: email});
+        if(!user){
+            return res.status(400).json({error: "User is not registered with UI lab. Please enter valid email."});
+        }
+
+        if(req.session.username == user.username){
+            return res.status(400).json({error: "Cannot add yourself to a project!"});
+        }
+
+        if(project.users.includes(user.username)){
+            return res.status(400).json({error: "User already added!"});
+        }
+
+        let workerData = {action: 'add', sessionUser: req.session.username, projectTitle: project.title, username: user.username, email: email};
+        let worker = new Worker('./worker.js', {workerData: workerData});
+        worker.once("message", (success) => {
+            if (!success){
+                res.status(400).json({error: "Email not sent!"});
+                worker.terminate();
+            }
+            else{
+                project.users.push(user.username);
+                project.save();
+                res.status(200).json({message: "User added successfully!"});
+                worker.terminate();
+            }
+        });
+
+    } catch (err) {
+        res.status(400).json({error: err.message});
+    }
+};
+
 //get methods
 const getProjects = async (req, res) => {
-    
     try{
         let projects = await Projects.find({}, { title: 1, _id: 0 });
         res.status(200).json({status: "success", projects});
@@ -181,6 +226,19 @@ const getElement = async (req, res) => {
         }
         res.status(200).json(element);
 
+    }catch(err) {
+        res.status(400).json({error: err.message});
+    }
+};
+
+const getUsers = async (req, res) => {
+    const projectId = req.params.projectId;
+    try{
+        let project = await Projects.findOne({_id: projectId});
+        if(!project) return res.status(400).json({error: "project does not exist!"});
+
+        res.status(200).json(project.users);
+        
     }catch(err) {
         res.status(400).json({error: err.message});
     }
@@ -320,7 +378,7 @@ const updateFrame= async (req, res) => {
 const updateElement = async (req, res) => {
     const projectId = req.params.projectId;
     const frameId = req.params.frameId;
-    const elementId = req.params.elementId
+    const elementId = req.params.elementId;
     const content = req.body.content;
     try{
         if(!content){
@@ -352,6 +410,24 @@ const updateElement = async (req, res) => {
     }
 };
 
+const removeUser = async (req, res) => {
+    const projectId = req.params.projectId;
+    const username = req.query.username;
+    try{
+        let project = await Projects.findOne({_id: projectId});
+        if(!project) return res.status(400).json({error: "project does not exist!"});
+
+        let i = project.owners.findIndex(user => user == username);
+        project.users.splice(i, 1);
+        project.save();
+
+        res.status(200).json(project.users);
+        
+    }catch(err) {
+        res.status(400).json({error: err.message});
+    }
+};
+
 module.exports = {
     createProject,
     createFrame,
@@ -367,5 +443,8 @@ module.exports = {
     deleteElement,
     updateProject,
     updateFrame,
-    updateElement
+    updateElement,
+    addUser,
+    getUsers,
+    removeUser
 };

@@ -1,8 +1,7 @@
-import { useState } from "react";
 import "./ULDesignElementHandle.css";
 const ULDesignElementHandle = (props) => {
   const {
-    setMouseMoveCb,
+    setMovementCb,
     handlePos,
     elementRef,
     element,
@@ -48,11 +47,16 @@ const ULDesignElementHandle = (props) => {
           height: `${newHeightGrow}px`,
         };
       }
-      return [element, updateObject];
+      const newElement = {
+        ...element,
+        position: {
+          ...element.position,
+          ...updateObject,
+        },
+      };
+      return newElement;
     };
-    setMouseMoveCb({
-      fn: mouseMoveCb,
-    });
+    setMovementCb(mouseMoveCb);
   };
 
   return (

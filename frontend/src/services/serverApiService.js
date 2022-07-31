@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:3001/api/";
+const API_URL = window.location.origin + "/api/";
+// const API_URL = "http://localhost:3001/api/";
 
 const jsonRequest = (method) => (resource, data) => {
   return fetch(API_URL + resource, {
@@ -7,7 +8,16 @@ const jsonRequest = (method) => (resource, data) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
-  }).then((response) => response.json());
+  })
+    .then((response) => response.json())
+    .then((res) => {
+      if (res.code === 401) {
+        document.cookie =
+          "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        window.location.href = "/login";
+      }
+      return res;
+    });
 };
 
 const getRequest = jsonRequest("GET");
@@ -47,7 +57,9 @@ const createProject = (title) =>
   postRequest("projects", {
     title,
   });
-const getProjects = () => getRequest("projects");
+const getProjects = () => {
+  return getRequest("projects");
+};
 const getProject = (title) => getRequest("projects/" + title);
 const updateProject = (title, newTitle) =>
   putRequest("projects/" + title, {
@@ -101,7 +113,7 @@ const updateElement = (projectTitle, frameTitle, elementId, updatedElement) =>
       frameTitle +
       "/elements/" +
       elementId,
-    {content: updatedElement}
+    { content: updatedElement }
   );
 const deleteElement = (projectTitle, frameTitle, elementId) =>
   deleteRequest(
@@ -113,7 +125,7 @@ const deleteElement = (projectTitle, frameTitle, elementId) =>
       elementId
   );
 
-module.exports = {
+const serverApiService = {
   signUp,
   signIn,
   oauth,
@@ -134,3 +146,5 @@ module.exports = {
   updateElement,
   deleteElement,
 };
+
+export default serverApiService;
