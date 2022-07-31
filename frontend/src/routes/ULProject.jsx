@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Button, Container, Row } from "react-bootstrap";
+import { Button, Container, Row, Stack } from "react-bootstrap";
 import { BsPlus, BsGear } from "react-icons/bs";
 import ULNavbar from "../components/ULNavbar";
 import ULFrameCover from "../components/ULFrameCover";
@@ -32,6 +32,14 @@ const ULProject = () => {
         console.log("create frame failed:", error);
       });
   };
+
+  const inviteUser = () => {
+    const username = prompt("Enter a username to invite");
+    return apiService.inviteUser(projectName, username).catch((error) => {
+      console.log("invite user failed:", error);
+    });
+  };
+
   useEffect(() => {
     getFrames();
   }, [getFrames]);
@@ -41,13 +49,19 @@ const ULProject = () => {
       <h3 className="px-3 pt-3">Home &gt; {projectName}</h3>
       <div>
         <div className="px-3 py-1 d-flex justify-content-between">
-          <Button
-            className="d-flex justify-content-between"
-            onClick={createFrame}
-          >
-            <BsPlus className="align-self-center" />
-            <span className="align-self-center">New Frame</span>
-          </Button>
+          <Stack gap={1} direction="horizontal" align="center">
+            <Button
+              className="d-flex justify-content-between"
+              onClick={createFrame}
+            >
+              <BsPlus className="align-self-center" />
+              <span className="align-self-center">New Frame</span>
+            </Button>
+            <Button className="d-flex" onClick={inviteUser}>
+              <BsPlus className="align-self-center" />
+              <span className="align-self-center">Invite User</span>
+            </Button>
+          </Stack>
           <Button className="d-flex">
             <BsGear className="align-self-center" />
           </Button>
