@@ -73,28 +73,46 @@ const ULDesignCanvas = (props) => {
     }
   };
 
-  return (
-    <div
-      className="h-100 w-100 border position-relative"
-      onMouseMove={onMouseMove}
-      onMouseUp={onMouseUp}
-    >
-      <div className="h-100 w-100" onMouseDown={unselectAllElements}></div>
-      {Array.from(elements.values()).map((element) => {
-        return (
-          <ULDesignElement
-            element={element}
-            isSelected={elementSelection.get(username)?.has(element.id)}
-            onMouseDown={selectThisElement(element)}
-            setMovementCb={(fn) => {
-              setMovementCb({ fn });
-            }}
-            key={element.id}
-          />
-        );
-      })}
-    </div>
-  );
+  if (!props.presentationMode) {
+    return (
+      <div
+        className="h-100 w-100 border position-relative"
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+      >
+        <div className="h-100 w-100" onMouseDown={unselectAllElements}></div>
+        {Array.from(elements.values()).map((element) => {
+          return (
+            <ULDesignElement
+              element={element}
+              isSelected={elementSelection.get(username)?.has(element.id)}
+              onMouseDown={selectThisElement(element)}
+              setMovementCb={(fn) => {
+                setMovementCb({ fn });
+              }}
+              key={element.id}
+            />
+          );
+        })}
+      </div>
+    );
+  } else {
+    return (
+      <div className="h-100 w-100 border position-relative">
+        {Array.from(elements.values()).map((element) => {
+          return (
+            <ULDesignElement
+              element={element}
+              isSelected={false}
+              onMouseDown={() => {}}
+              setMovementCb={() => {}}
+              key={element.id}
+            />
+          );
+        })}
+      </div>
+    );
+  }
 };
 
 export default ULDesignCanvas;

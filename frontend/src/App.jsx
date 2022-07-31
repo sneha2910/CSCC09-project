@@ -13,6 +13,7 @@ import ULDesign from './routes/ULDesign';
 import ULProject from './routes/ULProject';
 import ULMonitor from './routes/ULMonitor';
 import { UserContextProvider } from './contexts/UserContext';
+import ULPresentation from './routes/ULPresentation';
 
 function App() {
   /* Parse the cookie and get the current user */
@@ -28,6 +29,7 @@ function App() {
         <Route path="/design" element={<ULDesign />} />
         <Route path="/project" element={<ULProject />} />
         <Route path="/monitor" element={<ULMonitor />} />
+        <Route path="/presentation" element={<ULPresentation />} />
       </Routes>
     </UserContextProvider>
   );
