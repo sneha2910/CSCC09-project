@@ -14,6 +14,8 @@ const ULDesignCanvas = (props) => {
     unselectAllElements,
   } = props.es;
 
+  const { presentationMode } = props;
+
   const [movementCb, setMovementCb] = useState({
     fn: null,
   });
@@ -73,46 +75,42 @@ const ULDesignCanvas = (props) => {
     }
   };
 
-  if (!props.presentationMode) {
-    return (
-      <div
-        className="h-100 w-100 border position-relative"
-        onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-      >
+  const noop = (i) => {return noop;};
+
+  return (
+    <div
+      className="h-100 w-100 border position-relative"
+      onMouseMove={presentationMode ? noop : onMouseMove}
+      onMouseUp={presentationMode ? noop : onMouseUp}
+    >
+      {!presentationMode && (
         <div className="h-100 w-100" onMouseDown={unselectAllElements}></div>
-        {Array.from(elements.values()).map((element) => {
+      )}
+      {Array.from(elements.values())
+        .filter((element) => {
+          return !element.parent;
+        })
+        .map((element) => {
           return (
             <ULDesignElement
               element={element}
-              isSelected={elementSelection.get(username)?.has(element.id)}
-              onMouseDown={selectThisElement(element)}
-              setMovementCb={(fn) => {
-                setMovementCb({ fn });
-              }}
+              selectThisElement={presentationMode ? noop : selectThisElement}
+              setMovementCb={
+                presentationMode
+                  ? noop
+                  : (fn) => {
+                      setMovementCb({ fn });
+                    }
+              }
+              elementStack={[]}
+              es={props.es}
+              presentationMode={presentationMode}
               key={element.id}
             />
           );
         })}
-      </div>
-    );
-  } else {
-    return (
-      <div className="h-100 w-100 border position-relative">
-        {Array.from(elements.values()).map((element) => {
-          return (
-            <ULDesignElement
-              element={element}
-              isSelected={false}
-              onMouseDown={() => {}}
-              setMovementCb={() => {}}
-              key={element.id}
-            />
-          );
-        })}
-      </div>
-    );
-  }
+    </div>
+  );
 };
 
 export default ULDesignCanvas;

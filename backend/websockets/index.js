@@ -108,14 +108,32 @@ module.exports = (server, sessionParser) => {
           if (!frame) {
             return Promise.reject("Frame not found");
           }
-          console.log(elementIds);
+
+          const elementsToBeDeleted = [...elementIds];
+          const recursiveAddChildren = (elementId) => {
+            if (elementsToBeDeleted.includes(elementId)) {
+              return;
+            }
+            const element = frame.elements.find(
+              (element) => element.content.children?.includes(elementId)
+            );
+            if (element) {
+              elementsToBeDeleted.push(element.content.id);
+              recursiveAddChildren(element.content.id);
+            }
+          };
+          elementIds.forEach((elementId) => {
+            recursiveAddChildren(elementId);
+          });
+
           frame.elements = frame.elements.filter(
-            (element) => !elementIds.includes(element.id)
+            (element) => !elementsToBeDeleted.includes(element.content.id)
           );
+          console.log("Delete elements:", elementsToBeDeleted);
           return project.save().then(() => {
             return socket.broadcast
               .to(`${fileName}/${frameName}`)
-              .emit("deleteElements", { elementIds });
+              .emit("deleteElements", { elementIds: elementsToBeDeleted });
           });
         })
         .catch((err) => {

@@ -1,9 +1,12 @@
 import { useSearchParams } from "react-router-dom";
 import { Stack, Button } from "react-bootstrap";
-import { BsFileSlides, BsPlus, BsTrash } from "react-icons/bs";
+import { BsClipboard, BsFileSlides, BsPlus, BsTrash } from "react-icons/bs";
 import ULDesignCanvas from "./ULDesignCanvas";
 import ULDesignElementPanel from "./ULDesignElementPanel";
+import ULDesignElementLayer from "./ULDesignElementLayer";
 import useElementService from "../hooks/useElementService";
+import { useContext } from "react";
+import { UserContext } from "../contexts/UserContext";
 
 const ULDesignFrame = (props) => {
   /* Get the name of the file from the URL */
@@ -12,16 +15,18 @@ const ULDesignFrame = (props) => {
   const frameName = searchParams.get("frame");
 
   const es = useElementService(fileName, frameName);
-  const { createElements, deleteElements } = es;
+  const { createElements, deleteElements, elementSelection } = es;
+
+  const { username } = useContext(UserContext);
 
   const generateExampleElement = () => {
     return {
-      id: Math.random().toString(),
+      id: `elem${Math.random().toString()}`,
       position: {
         display: "block",
         position: "absolute",
-        top: Math.floor(Math.random() * 400) + "px",
-        left: Math.floor(Math.random() * 400) + "px",
+        top: Math.floor(Math.random() * 200) + "px",
+        left: Math.floor(Math.random() * 200) + "px",
         width: "56px",
         height: "28px",
       },
@@ -38,6 +43,31 @@ const ULDesignFrame = (props) => {
         color: "#000000",
       },
     };
+  };
+
+  const duplicateElements = () => {
+    const getDuplicateElements = (elementIds, parentId) => {
+      if (!elementIds || elementIds.length === 0) return [];
+      const elementObjects = elementIds.map((elementId) => {
+        const element = es.elements.get(elementId);
+        return element;
+      }).map((element) => {
+        const currId = `elem${Math.random().toString()}`;
+        return {
+          id: currId,
+          position: element.position,
+          style: element.style,
+          text: element.text,
+          parent: parentId ?? undefined,
+          children: getDuplicateElements(element.children, currId).map((child) => {
+            return child.id;
+          }),
+        };
+      });
+      createElements(elementObjects);
+      return elementObjects;
+    };
+    getDuplicateElements(Array.from(elementSelection.get(username) ?? []));
   };
 
   /* Connect to api service */
@@ -61,6 +91,9 @@ const ULDesignFrame = (props) => {
           <Button variant="light" onClick={createElement}>
             <BsPlus />
           </Button>
+          <Button variant="light" onClick={duplicateElements}>
+            <BsClipboard />
+          </Button>
           <Button variant="danger" onMouseDown={deleteElements}>
             <BsTrash />
           </Button>
@@ -70,6 +103,7 @@ const ULDesignFrame = (props) => {
         </Stack>
         <div className="flex-grow-1">
           <Stack direction="horizontal" className="h-100 w-100">
+            <ULDesignElementLayer es={es} />
             <ULDesignCanvas es={es} />
             <ULDesignElementPanel es={es} />
           </Stack>
@@ -77,11 +111,7 @@ const ULDesignFrame = (props) => {
       </Stack>
     );
   } else {
-    return (
-      <div className="h-100 w-100 border position-relative">
-        <ULDesignCanvas es={es} presentationMode={true} />
-      </div>
-    );
+    return <ULDesignCanvas es={es} presentationMode={true} />;
   }
 };
 
