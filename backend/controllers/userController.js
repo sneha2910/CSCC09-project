@@ -6,10 +6,9 @@ const { OAuth2Client } = require('google-auth-library')
 const client = new OAuth2Client(process.env.CLIENT_ID)
 const cookie = require('cookie');
 const jwt = require('jsonwebtoken');
-const asyncHandler = require('express-async-handler')
 
 
-const signupUser = asyncHandler(async (req, res) => {
+const signupUser = async (req, res) => {
     let {username, email, password} = req.body;
     if(!username || !email || !password) {
         return res.status(404).json({error: "Please enter all parameters!"});
@@ -54,9 +53,9 @@ const signupUser = asyncHandler(async (req, res) => {
     } catch (err) {
         res.status(400).json({error: err.message});
     }
-});
+};
 
-const signinUser = asyncHandler(async (req, res) => {
+const signinUser = async (req, res) => {
     let {email, password} = req.body;
     if(!email || !password) {
         return res.status(404).json({error: "Please enter all parameters!"});
@@ -77,9 +76,9 @@ const signinUser = asyncHandler(async (req, res) => {
     } catch (err) {
         res.status(400).json({error: err.message});
     }
-});
+};
 
-const authGoogle = asyncHandler(async (req, res) => {
+const authGoogle = async (req, res) => {
     const { token }  = req.body
      const ticket = await client.verifyIdToken({
          idToken: token,
@@ -119,39 +118,39 @@ const authGoogle = asyncHandler(async (req, res) => {
         res.status(400).json({error: err.message});
         console.log(err);
     }
-});
+};
 
-const signoutUser = asyncHandler(async function (req, res) {
+const signoutUser = async function (req, res) {
     res.setHeader('Set-Cookie', cookie.serialize('username', '', {
         maxAge: -1,
         path: '/'
     }));
     req.session.destroy();
     res.status(200).json({success: "successfully logged out!"});
-});
+};
 
 //@desc Get user data
 //@route GET api/users/me
 //@access Private
-const getMe = asyncHandler(async (req, res) => {
-    const {_id, name, email, picture} = await User.findById(req.user.id)
-    res.status(200).json({
-        id:_id,
-        username,
-        email,
-        picture
-    })
-});
+// const getMe = async (req, res) => {
+//     const {_id, name, email, picture} = await User.findById(req.user.id)
+//     res.status(200).json({
+//         id:_id,
+//         username,
+//         email,
+//         picture
+//     })
+// };
 
 //generate jwt
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {expiresIn: '30d'})
-}
+// const generateToken = (id) => {
+//     return jwt.sign({ id }, process.env.JWT_SECRET, {expiresIn: '30d'})
+// }
 
 module.exports = {
     signupUser,
     signinUser,
     signoutUser,
     authGoogle,
-    getMe
+    // getMe
 };
