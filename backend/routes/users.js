@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const { signupUser, signinUser, signoutUser, authGoogle, getMe } = require('../controllers/userController');
 const Users = require('../models/userModel');
+const {protect} = require('../middleware/authMiddleware')
 
 // router is an instance of the express router.
 // We use it to define our routes.
@@ -29,7 +30,7 @@ router.post('/signin/', currentlySignedin, signinUser);
 
 router.get('/signout/', currentlySignedin, signoutUser);
 
-router.get('/me/', currentlySignedin, getMe);
+router.get('/me/', protect, currentlySignedin, getMe);
 
 router.post('/auth/', currentlySignedin, authGoogle);
 

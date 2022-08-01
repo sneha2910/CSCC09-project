@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
 import PropTypes from 'prop-types';
 
-export function ULLoginForm({ setToken }) {
+export function ULLoginForm() {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const navigate = useNavigate();
@@ -17,7 +17,6 @@ export function ULLoginForm({ setToken }) {
     signIn(emailRef.current.value, passwordRef.current.value)
       .then((res) => {
         console.log("Logged in!" + res);
-        setToken(res);
         /* Redirect to the homepage */
         navigate("/");
       })
@@ -50,7 +49,4 @@ export function ULLoginForm({ setToken }) {
     </Form>
   );
 
-}
-ULLoginForm.propTypes = {
-  setToken: PropTypes.func.isRequired
 }
