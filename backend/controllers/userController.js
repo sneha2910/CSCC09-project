@@ -101,7 +101,6 @@ const authGoogle = async (req, res) => {
             path: '/'
             }));
             res.status(200).json({message: "Oath user" + user.username + "successfully logged in!"});
-            console.log(res);
         }
         else{
         user = await Users.create({username, email, isOnline: false, picture});

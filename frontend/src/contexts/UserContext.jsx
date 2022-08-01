@@ -33,9 +33,19 @@ export const UserContextProvider = (props) => {
         setCurrentUser(null);
       });
   };
+  const oauth = (token) => {
+    return userService
+      .oauth(token)
+      .then(() => {
+        setCurrentUser(getCurrentUserInCookie());
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
-    <UserContext.Provider value={{ username: currentUser, signIn, signOut }}>
+    <UserContext.Provider value={{ username: currentUser, signIn, signOut, oauth }}>
       {props.children}
     </UserContext.Provider>
   );
