@@ -1,6 +1,6 @@
 import React from "react";
 import { Card } from "react-bootstrap";
-import defaultDocument from "../media/document.png";
+import defaultDocument from "../media/project.png";
 import { Link } from "react-router-dom";
 
 const ULProjectCover = (props) => {
