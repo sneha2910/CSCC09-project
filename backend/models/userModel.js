@@ -8,15 +8,18 @@ const userSchema = new Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     password: {
-        type: String,
-        required: true
+        type: String
     },
     isOnline: {
         type: Boolean,
         required: true
+    },
+    picture:{
+        type: String
     }
 }, {timestampData: true});
 

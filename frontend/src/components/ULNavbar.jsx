@@ -35,11 +35,11 @@ const ULNavbar = () => {
         <Button className="d-flex" onClick={onClick}>
           Sign out
         </Button>
-      ) : (
+       ) : (
         <Button className="d-flex">
           <Link to="/Login" className="text-light">Log in</Link>
         </Button>
-      )}
+      )} 
     </Navbar>
   );
 };

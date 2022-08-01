@@ -1,4 +1,5 @@
 const API_URL = window.location.origin + "/api/";
+// const API_URL = "http://localhost:3001/api/";
 
 const jsonRequest = (method) => (resource, data) => {
   return fetch(API_URL + resource, {
@@ -31,10 +32,15 @@ const signUp = (username, email, password) =>
     password,
   });
 
-const signIn = (username, password) =>
+const signIn = (email, password) =>
   postRequest("users/signin", {
-    username,
+    email,
     password,
+  });
+
+const oauth = (token) => 
+  postRequest("users/auth", {
+    token
   });
 
 const signOut = () => getRequest("users/signout");
@@ -114,6 +120,7 @@ const deleteElement = (projectTitle, frameTitle, elementId) =>
 const serverApiService = {
   signUp,
   signIn,
+  oauth,
   signOut,
   createProject,
   getProjects,

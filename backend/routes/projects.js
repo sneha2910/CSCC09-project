@@ -19,6 +19,7 @@ const { createProject,
         getUsers } = require('../controllers/projectController');
 
 const router = express.Router();
+const {protect} = require('../middleware/authMiddleware');
 
 const isAuthenticated = function(req, res, next) {
     if (!req.session.username) return res.status(401).json({

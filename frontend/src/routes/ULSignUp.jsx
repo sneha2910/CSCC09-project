@@ -5,18 +5,28 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { ULSignUpForm } from "../components/ULSignUpForm";
 import { ULGoogleButton } from "../components/ULGoogleButton";
+import userService from '../services/userService.js';
 
 
 export default function ULSignUp() {
+  // Save to local storage every time the messages are changed
+
+    const createUser = (username, email, password) => {
+    userService.signUp(username, email, password)
+};
+
   return (
     <Container>
+      <script src="https://accounts.google.com/gsi/client" async defer></script>
         <Row className="justify-content-md-center">
            <Col md={{ span: 6}}>
                <Stack gap={3}>
           Create an account to use The UI Lab
           <ULGoogleButton />
           or
-          <ULSignUpForm />
+          <ULSignUpForm 
+          createUser={createUser}
+          />
           <Link to="/Login">Log in</Link> 
         </Stack>
            </Col>

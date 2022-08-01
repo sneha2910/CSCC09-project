@@ -8,25 +8,26 @@ import apiService from "../services/apiService.js";
 
 const ULProject = () => {
   const [searchParams] = useSearchParams();
-  const projectName = searchParams.get("project");
+  const projectId = searchParams.get("projectId");
+  const projectName = searchParams.get("projectName");
 
   const [frames, setFrames] = useState(null);
 
   const getFrames = useCallback(() => {
     return apiService
-      .getFrames(projectName)
+      .getFrames(projectId)
       .then((retn) => {
         setFrames(retn.frames);
       })
       .catch((error) => {
         console.log("get frames failed:", error);
       });
-  }, [projectName]);
+  }, [projectId]);
 
   const createFrame = () => {
     const frameName = prompt("Enter a name for your new frame");
     return apiService
-      .createFrame(projectName, frameName, 200, 200)
+      .createFrame(projectId, frameName, 200, 200)
       .then(getFrames)
       .catch((error) => {
         console.log("create frame failed:", error);
@@ -58,8 +59,8 @@ const ULProject = () => {
               frames.map((frame) => (
                 <ULFrameCover
                   key={frame.title}
-                  project={projectName}
-                  name={frame.title}
+                  project={{ _id: projectId, title: projectName }}
+                  frame={frame}
                 />
               ))}
           </Row>

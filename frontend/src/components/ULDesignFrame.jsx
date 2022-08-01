@@ -11,10 +11,10 @@ import { UserContext } from "../contexts/UserContext";
 const ULDesignFrame = (props) => {
   /* Get the name of the file from the URL */
   const [searchParams] = useSearchParams();
-  const fileName = searchParams.get("project");
-  const frameName = searchParams.get("frame");
+  const projectId = searchParams.get("projectId");
+  const frameId = searchParams.get("frameId");
 
-  const es = useElementService(fileName, frameName);
+  const es = useElementService(projectId, frameId);
   const { createElements, deleteElements, elementSelection } = es;
 
   const { username } = useContext(UserContext);
@@ -79,7 +79,7 @@ const ULDesignFrame = (props) => {
 
   const openPresentationModeInNewTab = () => {
     window.open(
-      `/presentation?project=${fileName}&frame=${frameName}`,
+      `/presentation?project=${projectId}&frame=${frameId}`,
       "_blank"
     );
   };

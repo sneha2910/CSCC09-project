@@ -2,10 +2,13 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import React from 'react'
 import { useRef } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import userService from '../services/userService.js';
 
 export function  ULSignUpForm(props) {
+    const { createUser } = props;
+    const navigate = useNavigate();
+
   const emailRef = useRef(null);
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
@@ -19,7 +22,11 @@ export function  ULSignUpForm(props) {
 
     userService.signUp(username, email, password).catch(error => {
       console.log(error);
-    });
+    })
+    .then(() => {
+        console.log("Signed up!");
+        navigate("/");
+  });
       
     e.target.reset();
   };
@@ -42,7 +49,7 @@ export function  ULSignUpForm(props) {
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="formBasicCheckbox">
-        <Form.Check type="checkbox" label="By creating an account, I agree to The UI Lab's TOS" />
+        <Form.Check type="checkbox" label="By creating an account, I agree to The UI Lab's TOS" required/>
         <Link target="_blank"to="/TOSPage">TOS</Link>
       </Form.Group>
 

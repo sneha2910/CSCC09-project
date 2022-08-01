@@ -60,7 +60,7 @@ const ULHomepage = () => {
             <Row>
               {projects &&
                 projects.map((project) => (
-                  <ULProjectCover key={project.title} name={project.title} />
+                  <ULProjectCover key={project.title} project={project} />
                 ))}
             </Row>
           </Container>

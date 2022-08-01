@@ -22,7 +22,8 @@ const frameSchema = new Schema({
 
 const projectSchema = new Schema({
     users: {
-        type: [String]
+        type: [String],
+        required: true,
     },
     title: {
         type: String,

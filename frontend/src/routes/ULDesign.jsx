@@ -7,8 +7,11 @@ import ULDesignFrame from '../components/ULDesignFrame';
 const ULDesign = () => {
   /* Get the name of the file from the URL */
   const [searchParams] = useSearchParams();
-  const projectName = searchParams.get("project");
-  const frameName = searchParams.get("frame");
+  const projectId = searchParams.get("projectId");
+  const frameId = searchParams.get("frameId");
+  const projectName = searchParams.get("projectName");
+  const frameName = searchParams.get("frameName");
+
   return (
     <Stack className="h-100">
       <ULNavbar />

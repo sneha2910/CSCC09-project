@@ -122,7 +122,7 @@ const addUser = async (req, res) => {
 //get methods
 const getProjects = async (req, res) => {
     try{
-        let projects = await Projects.find({ users: req.session.username });
+        let projects = await Projects.find({ users: req.session.username }, {_id: 1, title: 1});
         res.status(200).json({status: "success", projects});
     }catch(err) {
         res.status(400).json({error: err.message});
