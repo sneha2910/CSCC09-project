@@ -5,9 +5,9 @@ const toSocketMiddleware = (middleware) => (socket, next) => {
   middleware(socket.request, {}, next);
 };
 
-const joinRoom = (socket, projectName, frameName) => {
-  console.log(`${projectName}/${frameName}`)
-  socket.join(`${projectName}/${frameName}`);
+const joinRoom = (socket, projectId, frameId) => {
+  console.log(`${projectId}/${frameId}`)
+  socket.join(`${projectId}/${frameId}`);
 };
 const leaveRoom = (socket) => {
   socket.leaveAll();
@@ -40,10 +40,10 @@ module.exports = (server, sessionParser) => {
   io.on("connection", (socket) => {
     console.log(`User ${socket.request.session.username} connected`);
     socket.on("joinRoom", (data) => {
-      const { projectName, frameName } = data;
-      joinRoom(socket, projectName, frameName);
+      const { projectId, frameId } = data;
+      joinRoom(socket, projectId, frameId);
       const currentFrameSelection =
-        userSelection.get(`${projectName}/${frameName}`) ?? new Map();
+        userSelection.get(`${projectId}/${frameId}`) ?? new Map();
         console.log(currentFrameSelection);
         Array.from(currentFrameSelection.entries()).forEach(([username, selection]) => {
           socket.emit("updateSelection", {
@@ -57,13 +57,13 @@ module.exports = (server, sessionParser) => {
     });
 
     const updateSelection = (data) => {
-      const { projectName, frameName, elementIds } = data;
+      const { projectId, frameId, elementIds } = data;
       const username = socket.request.session.username;
       const frameSelection =
-        userSelection.get(`${projectName}/${frameName}`) ?? new Map();
+        userSelection.get(`${projectId}/${frameId}`) ?? new Map();
       frameSelection.set(username, new Set(elementIds));
 
-      socket.to(`${projectName}/${frameName}`).emit("updateSelection", {
+      socket.to(`${projectId}/${frameId}`).emit("updateSelection", {
         username,
         elementIds,
       });
@@ -71,9 +71,10 @@ module.exports = (server, sessionParser) => {
     socket.on("updateSelection", updateSelection);
 
     const updateElements = (data) => {
-      const { elements, fileName, frameName } = data;
-      Projects.findOne({ title: fileName }).then((project) => {
-        const frame = project.frames.find((frame) => frame.title === frameName);
+      const { elements, projectId, frameId } = data;
+      Projects.findOne({ _id: projectId }).then((project) => {
+        console.log(project.frames);
+        const frame = project.frames.find((frame) => frame._id == frameId);
         if (!frame) {
           return Promise.reject("Frame not found");
         }
@@ -91,7 +92,7 @@ module.exports = (server, sessionParser) => {
         return project.save().then(() => {
           console.log("Elements updated", socket.rooms);
           return socket.broadcast
-            .to(`${fileName}/${frameName}`)
+            .to(`${projectId}/${frameId}`)
             .emit("updateElements", { elements });
         });
       }).catch((err) => {
@@ -101,10 +102,10 @@ module.exports = (server, sessionParser) => {
     socket.on("updateElements", updateElements);
 
     const deleteElements = (data) => {
-      const { elementIds, fileName, frameName } = data;
-      Projects.findOne({ title: fileName })
+      const { elementIds, projectId, frameId } = data;
+      Projects.findOne({ _id: projectId })
         .then((project) => {
-          let frame = project.frames.find((frame) => frame.title === frameName);
+          let frame = project.frames.find((frame) => frame._id == frameId);
           if (!frame) {
             return Promise.reject("Frame not found");
           }
@@ -132,7 +133,7 @@ module.exports = (server, sessionParser) => {
           console.log("Delete elements:", elementsToBeDeleted);
           return project.save().then(() => {
             return socket.broadcast
-              .to(`${fileName}/${frameName}`)
+              .to(`${projectId}/${frameId}`)
               .emit("deleteElements", { elementIds: elementsToBeDeleted });
           });
         })

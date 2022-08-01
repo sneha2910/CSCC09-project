@@ -3,7 +3,7 @@ import io from "socket.io-client";
 import { useCurrentUser } from "./useCurrentUser.js";
 import apiService from "../services/apiService.js";
 
-const useElementService = (fileName, frameName) => {
+const useElementService = (projectId, frameId) => {
   /* Elements is a map from element id to objects */
   const [elements, setElements] = useState(new Map());
   /* Selection is a map from username to array of element ids */
@@ -42,8 +42,8 @@ const useElementService = (fileName, frameName) => {
 
       /* Join the room */
       socket.emit("joinRoom", {
-        projectName: fileName,
-        frameName,
+        projectId,
+        frameId,
       });
       /* Listen for messages */
       socket.on("updateElements", (data) => {
@@ -68,7 +68,7 @@ const useElementService = (fileName, frameName) => {
     }
 
     /* Load all elements */
-    apiService.getElements(fileName, frameName).then((data) => {
+    apiService.getElements(projectId, frameId).then((data) => {
       updateLocalElements(
         data.elements.map((element) => {
           return element.content;
@@ -80,7 +80,7 @@ const useElementService = (fileName, frameName) => {
     return () => {
       websocket?.disconnect();
     };
-  }, [fileName, frameName, websocket]);
+  }, [projectId, frameId, websocket]);
 
   /* Update the elements stored on the server */
   useEffect(() => {
@@ -93,8 +93,8 @@ const useElementService = (fileName, frameName) => {
         elements: Array.from(elementsToBePushed).map((elementId) => {
           return elements.get(elementId);
         }),
-        fileName,
-        frameName,
+        projectId,
+        frameId,
       });
       console.log("Emitted");
       setElementsToBePushed(new Set());
@@ -104,14 +104,14 @@ const useElementService = (fileName, frameName) => {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [elementsToBePushed, elements, websocket, fileName, frameName]);
+  }, [elementsToBePushed, elements, websocket, projectId, frameId]);
 
   /* Create an element */
   const createElements = (elements) => {
     websocket.emit("updateElements", {
       elements,
-      fileName,
-      frameName,
+      projectId,
+      frameId,
     });
     updateLocalElements(elements);
   };
@@ -137,8 +137,8 @@ const useElementService = (fileName, frameName) => {
 
     websocket.emit("deleteElements", {
       elementIds,
-      fileName,
-      frameName,
+      projectId,
+      frameId,
     });
     deleteLocalElements(elementsToBeDeleted);
   };
@@ -173,8 +173,8 @@ const useElementService = (fileName, frameName) => {
 
       websocket.emit("updateSelection", {
         elementIds: Array.from(newElementSelectionByUser),
-        fileName,
-        frameName,
+        projectId,
+        frameId,
       });
       const newElementSelection = new Map(elementSelection);
       newElementSelection.set(currentUser, newElementSelectionByUser);

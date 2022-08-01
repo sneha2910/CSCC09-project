@@ -79,7 +79,7 @@ const ULDesignFrame = (props) => {
 
   const openPresentationModeInNewTab = () => {
     window.open(
-      `/presentation?project=${projectId}&frame=${frameId}`,
+      `/presentation?projectId=${projectId}&frameId=${frameId}`,
       "_blank"
     );
   };
