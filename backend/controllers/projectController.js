@@ -15,6 +15,7 @@ const createProject = async (req, res) => {
         }
         let users = [req.session.username];
         project = await Projects.create({users, title});
+        console.log(project);
         res.status(200).json({message: "Project created successfully!"});
 
     } catch (err) {

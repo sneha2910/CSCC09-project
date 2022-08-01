@@ -10,15 +10,6 @@ export function ULGoogleButton() {
     var userObject =  jwt_decode(response.credential);
     console.log(userObject);
 
-  //   const res = fetch("http://localhost:3001/api/users/auth", {
-  //     method: "POST",
-  //     body: JSON.stringify({
-  //        token: response.credential
-  //     }),
-  //   headers: {
-  //     "Content-Type": "application/json"
-  //   }
-  // })
     const token = response.credential;
     userService.oauth(token)
     .catch(error => {

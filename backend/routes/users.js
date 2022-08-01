@@ -12,26 +12,13 @@ const router = express.Router();
 // This help convert the id from string to ObjectId for the _id.
 const ObjectId = require("mongodb").ObjectId;
 
-const isAuthenticated = function(req, res, next) {
-    if (!req.username) return res.status(401).end("access denied");
-    next();
-};
 
-const currentlySignedin = async function(req, res, next){
-    const user = await Users.findOne({ id:  req.session.username })
-    req.user = user
-    next();
-}
+router.post('/signup/', signupUser);
 
+router.post('/signin/', signinUser);
 
-router.post('/signup/', currentlySignedin, signupUser);
+router.get('/signout/', signoutUser);
 
-router.post('/signin/', currentlySignedin, signinUser);
-
-router.get('/signout/', currentlySignedin, signoutUser);
-
-// router.get('/me/', currentlySignedin, getMe);
-
-router.post('/auth/', currentlySignedin, authGoogle);
+router.post('/auth/', authGoogle);
 
 module.exports = router;

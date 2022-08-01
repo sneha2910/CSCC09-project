@@ -32,24 +32,16 @@ const signUp = (username, email, password) =>
     password,
   });
 
-const signIn = (username, password) =>
+const signIn = (email, password) =>
   postRequest("users/signin", {
-    username,
+    email,
     password,
   });
 
-const oauth = async (token) => {
-  const response = await fetch("http://localhost:3001/api/users/auth", {
-    method: "POST",
-    body: JSON.stringify({
-      token
-    }),
-    headers: {
-      "Content-Type": "application/json"
-    }
+const oauth = (token) => 
+  postRequest("users/auth", {
+    token
   });
-  return await response.json();
-}
 
 const signOut = () => getRequest("users/signout");
 

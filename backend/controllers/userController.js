@@ -67,12 +67,12 @@ const signinUser = async (req, res) => {
 
         let result = await bcrypt.compare(password, user.password);
         if (!result) return res.status(401).json("access denied");
-        req.session.username = username;
-        res.setHeader('Set-Cookie', cookie.serialize('username', username, {
+        req.session.username = user.username;
+        res.setHeader('Set-Cookie', cookie.serialize('username', user.username, {
             maxAge: 60 * 60 * 24 * 7,
             path: '/'
         }));
-        res.status(200).json({message: username + "successfully logged in!"});
+        res.status(200).json({message: user.username + "successfully logged in!"});
     } catch (err) {
         res.status(400).json({error: err.message});
     }

@@ -22,9 +22,8 @@ const frameSchema = new Schema({
 
 const projectSchema = new Schema({
     users: {
-        type: mongoose.Schema.Types.ObjectId, //[String]
+        type: [String],
         required: true,
-        ref: 'Users'
     },
     title: {
         type: String,
