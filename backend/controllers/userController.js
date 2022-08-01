@@ -37,11 +37,12 @@ const signupUser = async (req, res) => {
                 worker.terminate();
             }
             else{
-                res.status(200).json({message: "User added successfully!"});
+                res.status(200).json({success: "User added successfully!"});
+                res.redirect('/');
                 worker.terminate();
             }
         });
-
+        
     } catch (err) {
         res.status(400).json({error: err.message});
     }
@@ -64,7 +65,7 @@ const signinUser = async (req, res) => {
             maxAge: 60 * 60 * 24 * 7,
             path: '/'
         }));
-        res.status(200).json({message: username + "successfully logged in!"});
+        res.status(200).json({success: username + "successfully logged in!"});
     } catch (err) {
         res.status(400).json({error: err.message});
     }

@@ -15,7 +15,7 @@ const createProject = async (req, res) => {
         }
         let users = [req.session.username];
         project = await Projects.create({users, title});
-        res.status(200).json({message: "Project created successfully!"});
+        res.status(200).json({success: "Project created successfully!"});
 
     } catch (err) {
         res.status(400).json({error: err.message});
@@ -30,7 +30,7 @@ const createFrame = async (req, res) => {
         if(!title || !height || !width) {
             return res.status(404).json({error: "Please enter all parameters!"});
         }
-        let project = await Projects.findOne({ title: projectId });
+        let project = await Projects.findOne({ _id: projectId });
         if (!project){
             return res.status(400).json({error: "project does not exist!"});
         }
@@ -41,7 +41,7 @@ const createFrame = async (req, res) => {
         }
         project.frames.push({title, height, width});
         await project.save();
-        res.status(200).json({message: "Frame created successfully!",
+        res.status(200).json({success: "Frame created successfully!",
                             frame: {title, height, width}});
 
     }catch (err) {
@@ -55,20 +55,20 @@ const createElement = async (req, res) => {
     const element = req.body;
     
     try{
-        let project = await Projects.findOne({ title: projectId });
+        let project = await Projects.findOne({ _id: projectId });
         if (!project){
             return res.status(400).json({error: "project does not exist!"});
         }
 
-        let frame = project.frames.find(frame => frame.title == frameId);
+        let frame = project.frames.find(frame => frame._id == frameId);
         if (!frame) {
             return res.status(400).json({error: "frame does not exist!"});
         }
 
-        let index = project.frames.findIndex(frame => frame.title == frameId);
+        let index = project.frames.findIndex(frame => frame._id == frameId);
         project.frames[index].elements.push({content: element});
         await project.save();
-        res.status(200).json({message: "Element created successfully!"});
+        res.status(200).json({success: "Element created successfully!"});
 
     }catch(err) {
         res.status(400).json({error: err.message});
@@ -109,7 +109,7 @@ const addUser = async (req, res) => {
             else{
                 project.users.push(user.username);
                 project.save();
-                res.status(200).json({message: "User added successfully!"});
+                res.status(200).json({success: "User added successfully!"});
                 worker.terminate();
             }
         });
@@ -122,7 +122,7 @@ const addUser = async (req, res) => {
 //get methods
 const getProjects = async (req, res) => {
     try{
-        let projects = await Projects.find({ users: req.session.username }, { title: 1, _id: 0 });
+        let projects = await Projects.find({ users: req.session.username });
         res.status(200).json({status: "success", projects});
     }catch(err) {
         res.status(400).json({error: err.message});
@@ -135,6 +135,9 @@ const getProject = async (req, res) => {
         let project = await Projects.findOne({_id: projectId});
         if(!project) return res.status(400).json({error: "project does not exist!"});
 
+        if(!project.users.includes(req.session.username)){
+            return res.status(403).json({error: "Forbidden"});
+        }
         res.status(200).json(project);
         
     }catch(err) {
@@ -145,8 +148,13 @@ const getProject = async (req, res) => {
 const getFrames = async (req, res) => {
     const projectId = req.params.projectId;
     try{
-        let project = await Projects.findOne({title: projectId});
+        let project = await Projects.findOne({_id: projectId});
         if(!project) return res.status(400).json({error: "project does not exist!"});
+
+        if(!project.users.includes(req.session.username)){
+            return res.status(403).json({error: "Forbidden"});
+        }
+
         res.status(200).json({
             status: "success",
             frames: project.frames,
@@ -165,13 +173,16 @@ const getFrame = async (req, res) => {
         let project = await Projects.findOne({_id: projectId});
         if(!project){
             return res.status(400).json({error: "project does not exist!"});
-        } 
+        }
+        
+        if(!project.users.includes(req.session.username)){
+            return res.status(403).json({error: "Forbidden"});
+        }
 
         let frame = project.frames.find(frame => frame._id == frameId);
         if (!frame) {
             return res.status(400).json({error: "frame does not exist!"});
         }
-
         res.status(200).json(frame);
         
     }catch(err) {
@@ -184,12 +195,16 @@ const getElements = async (req, res) => {
     const frameId = req.params.frameId;
 
     try{
-        let project = await Projects.findOne({title: projectId});
+        let project = await Projects.findOne({_id: projectId});
         if(!project){
             return res.status(400).json({error: "project does not exist!"});
         } 
 
-        let frame = project.frames.find(frame => frame.title == frameId);
+        if(!project.users.includes(req.session.username)){
+            return res.status(403).json({error: "Forbidden"});
+        }
+
+        let frame = project.frames.find(frame => frame._id == frameId);
         if (!frame) {
             return res.status(400).json({error: "frame does not exist!"});
         }
@@ -250,9 +265,13 @@ const deleteProject = async (req, res) => {
     try{
         let project = await Projects.findOne({_id: projectId});
         if(!project) return res.status(400).json({error: "project does not exist!"});
+
+        if(!project.users.includes(req.session.username)){
+            return res.status(403).json({error: "Forbidden"});
+        }
         
         await Projects.remove({_id : projectId});  
-        return res.status(200).json({message: "Project deleted!"});
+        return res.status(200).json({success: "Project deleted!"});
         
     }catch(err) {
         res.status(400).json({error: err.message});
@@ -266,6 +285,10 @@ const deleteFrame = async (req, res) => {
     try{
         let project = await Projects.findOne({_id: projectId});
         if(!project) return res.status(400).json({error: "project does not exist!"});
+
+        if(!project.users.includes(req.session.username)){
+            return res.status(403).json({error: "Forbidden"});
+        }
         
         let frame = project.frames.find(frame => frame._id == frameId);
         if (!frame) {
@@ -275,7 +298,7 @@ const deleteFrame = async (req, res) => {
         let index = project.frames.findIndex(frame => frame._id == frameId);
         project.frames.splice(index);
         project.save();
-        res.status(200).json({message: "Frame deleted!"});
+        res.status(200).json({success: "Frame deleted!"});
     }catch(err) {
         res.status(400).json({error: err.message});
     }
@@ -286,17 +309,21 @@ const deleteElement = async (req, res) => {
     const frameId = req.params.frameId;
     const elementId = req.params.elementId;
     try{
-        let project = await Projects.findOne({ title: projectId });
+        let project = await Projects.findOne({ _id: projectId });
         if (!project){
             return res.status(400).json({error: "project does not exist!"});
         }
 
-        let frame = project.frames.find(frame => frame.title == frameId);
+        if(!project.users.includes(req.session.username)){
+            return res.status(403).json({error: "Forbidden"});
+        }
+
+        let frame = project.frames.find(frame => frame._id == frameId);
         if (!frame) {
             return res.status(400).json({error: "frame does not exist!"});
         }
 
-        let index = project.frames.findIndex(frame => frame.title == frameId);
+        let index = project.frames.findIndex(frame => frame._id == frameId);
         let element = project.frames[index].elements.find(element => element._id == elementId);
         if (!element) {
             return res.status(400).json({error: "element does not exist!"});
@@ -305,7 +332,7 @@ const deleteElement = async (req, res) => {
         let i = project.frames[index].elements.findIndex(element => element._id == elementId);
         project.frames[index].elements.splice(i, 1);
         project.save();
-        res.status(200).json({message: "Element deleted!"});
+        res.status(200).json({success: "Element deleted!"});
 
     }catch(err) {
         res.status(400).json({error: err.message});
@@ -321,10 +348,11 @@ const updateProject = async (req, res) => {
         if(!title){
             res.status(400).json({error: "Please provide new title"});
         }
+
         let project = await Projects.findOneAndUpdate({_id: projectId}, {$set:{title: title}});
         if(!project) return res.status(400).json({error: "project does not exist!"});
 
-        res.status(200).json({message: "Project title updated!"});
+        res.status(200).json({success: "Project title updated!"});
         
     }catch(err) {
         res.status(400).json({error: err.message});
@@ -343,6 +371,10 @@ const updateFrame= async (req, res) => {
         
         let project = await Projects.findOne({_id: projectId});
         if(!project) return res.status(400).json({error: "project does not exist!"});
+
+        if(!project.users.includes(req.session.username)){
+            return res.status(403).json({error: "Forbidden"});
+        }
         
         let frame = project.frames.find(frame => frame._id == frameId);
         if (!frame) {
@@ -368,7 +400,7 @@ const updateFrame= async (req, res) => {
         }
         
         project.save();
-        res.status(200).json({message: "Frame updated!"});
+        res.status(200).json({success: "Frame updated!"});
         
     }catch(err) {
         res.status(400).json({error: err.message});
@@ -385,15 +417,19 @@ const updateElement = async (req, res) => {
             res.status(400).json({error: "Please provide all parameters"});
         }
         
-        let project = await Projects.findOne({title: projectId});
+        let project = await Projects.findOne({_id: projectId});
         if(!project) return res.status(400).json({error: "project does not exist!"});
+
+        if(!project.users.includes(req.session.username)){
+            return res.status(403).json({error: "Forbidden"});
+        }
         
-        let frame = project.frames.find(frame => frame.title == frameId);
+        let frame = project.frames.find(frame => frame._id == frameId);
         if (!frame) {
             return res.status(400).json({error: "frame does not exist!"});
         }
 
-        let index = project.frames.findIndex(frame => frame.title == frameId);
+        let index = project.frames.findIndex(frame => frame._id == frameId);
         let element = project.frames[index].elements.find(element => element._id == elementId);
         if (!element) {
             return res.status(400).json({error: "element does not exist!"});
@@ -403,7 +439,7 @@ const updateElement = async (req, res) => {
         let i = project.frames[index].elements.findIndex(element => element._id == elementId);
         project.frames[index].elements[i].content = content;
         project.save();
-        res.status(200).json({message: "Element updated!"});
+        res.status(200).json({success: "Element updated!"});
         
     }catch(err) {
         res.status(400).json({error: err.message});
@@ -416,6 +452,10 @@ const removeUser = async (req, res) => {
     try{
         let project = await Projects.findOne({_id: projectId});
         if(!project) return res.status(400).json({error: "project does not exist!"});
+
+        if(!project.users.includes(req.session.username)){
+            return res.status(403).json({error: "Forbidden"});
+        }
 
         let i = project.owners.findIndex(user => user == username);
         project.users.splice(i, 1);
