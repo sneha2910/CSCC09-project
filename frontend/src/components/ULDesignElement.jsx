@@ -25,7 +25,9 @@ const ULDesignElement = (props) => {
       };
 
   const { username } = useContext(UserContext);
-  const isSelected = es.elementSelection.get(username)?.has(element.id);
+  const isSelected = presentationMode
+    ? false
+    : es.elementSelection.get(username)?.has(element.id);
 
   /* Reference to this element. */
   const elementRef = useRef(null);
