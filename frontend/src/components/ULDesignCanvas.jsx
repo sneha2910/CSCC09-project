@@ -14,6 +14,8 @@ const ULDesignCanvas = (props) => {
     unselectAllElements,
   } = props.es;
 
+  const { presentationMode } = props;
+
   const [movementCb, setMovementCb] = useState({
     fn: null,
   });
@@ -73,26 +75,40 @@ const ULDesignCanvas = (props) => {
     }
   };
 
+  const noop = (i) => {return noop;};
+
   return (
     <div
       className="h-100 w-100 border position-relative"
-      onMouseMove={onMouseMove}
-      onMouseUp={onMouseUp}
+      onMouseMove={presentationMode ? noop : onMouseMove}
+      onMouseUp={presentationMode ? noop : onMouseUp}
     >
-      <div className="h-100 w-100" onMouseDown={unselectAllElements}></div>
-      {Array.from(elements.values()).map((element) => {
-        return (
-          <ULDesignElement
-            element={element}
-            isSelected={elementSelection.get(username)?.has(element.id)}
-            onMouseDown={selectThisElement(element)}
-            setMovementCb={(fn) => {
-              setMovementCb({ fn });
-            }}
-            key={element.id}
-          />
-        );
-      })}
+      {!presentationMode && (
+        <div className="h-100 w-100" onMouseDown={unselectAllElements}></div>
+      )}
+      {Array.from(elements.values())
+        .filter((element) => {
+          return !element.parent;
+        })
+        .map((element) => {
+          return (
+            <ULDesignElement
+              element={element}
+              selectThisElement={presentationMode ? noop : selectThisElement}
+              setMovementCb={
+                presentationMode
+                  ? noop
+                  : (fn) => {
+                      setMovementCb({ fn });
+                    }
+              }
+              elementStack={[]}
+              es={props.es}
+              presentationMode={presentationMode}
+              key={element.id}
+            />
+          );
+        })}
     </div>
   );
 };

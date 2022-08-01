@@ -106,7 +106,6 @@ const useElementService = (fileName, frameName) => {
     };
   }, [elementsToBePushed, elements, websocket, fileName, frameName]);
 
-
   /* Create an element */
   const createElements = (elements) => {
     websocket.emit("updateElements", {
@@ -118,12 +117,30 @@ const useElementService = (fileName, frameName) => {
   };
   const deleteElements = () => {
     const elementIds = Array.from(elementSelection.get(currentUser));
+    const elementsToBeDeleted = [...elementIds];
+
+    const recursiveChildren = (elementId) => {
+      if (elementsToBeDeleted.includes(elementId)) {
+        return;
+      }
+      const element = elements.get(elementId);
+      if (element.children) {
+        element.children.forEach((childId) => {
+          recursiveChildren(childId);
+        });
+      }
+      elementsToBeDeleted.push(elementId);
+    };
+    elementIds.forEach((elementId) => {
+      recursiveChildren(elementId);
+    });
+
     websocket.emit("deleteElements", {
       elementIds,
       fileName,
       frameName,
     });
-    deleteLocalElements(elementIds);
+    deleteLocalElements(elementsToBeDeleted);
   };
   const updateElements = (newElements) => {
     updateLocalElements(newElements);
