@@ -8,7 +8,8 @@ const userSchema = new Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     password: {
         type: String
@@ -16,6 +17,9 @@ const userSchema = new Schema({
     isOnline: {
         type: Boolean,
         required: true
+    },
+    picture:{
+        type: String
     }
 }, {timestampData: true});
 

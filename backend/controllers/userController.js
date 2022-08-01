@@ -5,9 +5,11 @@ const bcrypt = require('bcrypt');
 const { OAuth2Client } = require('google-auth-library')
 const client = new OAuth2Client(process.env.CLIENT_ID)
 const cookie = require('cookie');
+const jwt = require('jsonwebtoken');
+const asyncHandler = require('express-async-handler')
 
 
-const signupUser = async (req, res) => {
+const signupUser = asyncHandler(async (req, res) => {
     let {username, email, password} = req.body;
     if(!username || !email || !password) {
         return res.status(404).json({error: "Please enter all parameters!"});
@@ -17,6 +19,11 @@ const signupUser = async (req, res) => {
         if(err) res.status(400).end({error: err});
         else if (hash) password = hash;
     });
+
+    let emailHash = trim( email );
+    emailHash = strtolower( emailHash );
+    emailHash = md5(emailHash);
+    picURL = "https://www.gravatar.com/avatar/" + emailHash + "?s=80&d=identicon&r=g";
 
     try {
         let user = await Users.findOne({ username: username });
@@ -29,7 +36,7 @@ const signupUser = async (req, res) => {
             return res.status(409).json({error: "Account exists with the given email! Log In instead."});
         }
 
-        user = await Users.create({username, email, password, isOnline: false});
+        user = await Users.create({username, email, password, isOnline: false, picURL});
 
         let workerData = {action: 'signup', username: username, email: email};
         let worker = new Worker('./worker.js', {workerData: workerData});
@@ -47,16 +54,16 @@ const signupUser = async (req, res) => {
     } catch (err) {
         res.status(400).json({error: err.message});
     }
-};
+});
 
-const signinUser = async (req, res) => {
-    let {username, password} = req.body;
-    if(!username || !password) {
+const signinUser = asyncHandler(async (req, res) => {
+    let {email, password} = req.body;
+    if(!email || !password) {
         return res.status(404).json({error: "Please enter all parameters!"});
     }
 
     try {   
-        let user = await Users.findOne({ username: username });
+        let user = await Users.findOne({ email: email });
         if (!user) return res.status(401).json("access denied");
 
         let result = await bcrypt.compare(password, user.password);
@@ -70,9 +77,9 @@ const signinUser = async (req, res) => {
     } catch (err) {
         res.status(400).json({error: err.message});
     }
-};
+});
 
-const authGoogle = async (req, res) => {
+const authGoogle = asyncHandler(async (req, res) => {
     const { token }  = req.body
      const ticket = await client.verifyIdToken({
          idToken: token,
@@ -81,6 +88,7 @@ const authGoogle = async (req, res) => {
      const payload = ticket.getPayload();
      const username = payload['name'];
      const email = payload['email'];
+     const picture = payload['picture'];
     try {
         
         let user = await Users.findOne({ email: email });
@@ -96,7 +104,7 @@ const authGoogle = async (req, res) => {
             console.log(res);
         }
         else{
-        user = await Users.create({username, email, isOnline: false});
+        user = await Users.create({username, email, isOnline: false, picture});
         req.session.username = username;
         console.log("session set" + username);
         res.setHeader('Set-Cookie', cookie.serialize('username', username, {
@@ -111,20 +119,33 @@ const authGoogle = async (req, res) => {
         res.status(400).json({error: err.message});
         console.log(err);
     }
-};
+});
 
-const signoutUser = function (req, res) {
+const signoutUser = asyncHandler(async function (req, res) {
     res.setHeader('Set-Cookie', cookie.serialize('username', '', {
         maxAge: -1,
         path: '/'
     }));
     req.session.destroy();
     res.status(200).json({success: "successfully logged out!"});
-};
+});
+
+//@desc Get user data
+//@route GET api/users/me
+//@access Private
+const getMe = asyncHandler(async (req, res) => {
+    res.json({message: 'User data display'});
+});
+
+//generate jwt
+const generateToken = (id) => {
+    return jwt.sign({ id }, process.env.JWT_SECRET, {expiresIn: '30d'})
+}
 
 module.exports = {
     signupUser,
     signinUser,
     signoutUser,
-    authGoogle
+    authGoogle,
+    getMe
 };
