@@ -7,6 +7,9 @@ Jiasheng Ye
 
 Weihang Chen
 
+## Video Presentation Link
+https://youtu.be/8z0poZjyZX0
+
 ## Description
 **The UI Lab** is a **Prototype Creator Application** that allows users to collaborate with each other to create UI for their own applications. Users can create multiple UI for their own applications and connect them to one another in the flow that they want. Our application offers its users **asynchronous and synchronous collaboration** with the option of **voice calling**. Users can **add UI elements** to their prototypes and **add their desired behaviours to elements** such as buttons, icons and can also navigate between different UI frames. Once the prototype has been created, it can be exported as an image or pdf document, with each frame as a different image or a page in the document.
 
