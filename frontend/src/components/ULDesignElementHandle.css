@@ -1,0 +1,31 @@
+.ul-design-element-handle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  z-index: 1;
+  border: 1px solid black;
+}
+
+.ul-design-element-handle-tl {
+  top: -6px;
+  left: -6px;
+  cursor: nw-resize;
+}
+
+.ul-design-element-handle-tr {
+  top: -6px;
+  right: -6px;
+  cursor: ne-resize;
+}
+
+.ul-design-element-handle-bl {
+  bottom: -6px;
+  left: -6px;
+  cursor: sw-resize;
+}
+
+.ul-design-element-handle-br {
+  bottom: -6px;
+  right: -6px;
+  cursor: se-resize;
+}
