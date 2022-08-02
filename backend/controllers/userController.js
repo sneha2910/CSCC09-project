@@ -30,7 +30,7 @@ const signupUser = async (req, res) => {
             return res.status(409).json({error: "Account exists with the given email! Log In instead."});
         }
 
-        user = await Users.create({username, email, password, isOnline: false, picURL});
+        user = await Users.create({username, email, password, isOnline: false});
 
         let workerData = {action: 'signup', username: username, email: email};
         let worker = new Worker('./worker.js', {workerData: workerData});
@@ -45,7 +45,6 @@ const signupUser = async (req, res) => {
                 worker.terminate();
             }
         });
-        
     } catch (err) {
         res.status(400).json({error: err.message});
     }
@@ -81,7 +80,8 @@ const authGoogle = async (req, res) => {
          audience: process.env.CLIENT_ID
      });
      const payload = ticket.getPayload();
-     const username = payload['name'];
+     const arr = payload['name'].split(' ');
+     const username = arr[0];
      const email = payload['email'];
      const picture = payload['picture'];
     try {
@@ -89,13 +89,13 @@ const authGoogle = async (req, res) => {
         let user = await Users.findOne({ email: email });
         if (user){
             // await Users.findOneAndUpdate({ email: email }, {$push: { username: username }});
-            req.session.username = user.username;
+            req.session.username = username;
             console.log("session username" + req.session.username);
-            res.setHeader('Set-Cookie', cookie.serialize('username', user.username, {
+            res.setHeader('Set-Cookie', cookie.serialize('username', username, {
             maxAge: 60 * 60 * 24 * 7,
             path: '/'
             }));
-            res.status(200).json({message: "Oath user" + user.username + "successfully logged in!"});
+            res.status(200).json({message: "Oath user" + username + "successfully logged in!"});
         }
         else{
         user = await Users.create({username, email, isOnline: false, picture});
