@@ -24,6 +24,7 @@ const getRequest = jsonRequest("GET");
 const postRequest = jsonRequest("POST");
 const putRequest = jsonRequest("PUT");
 const deleteRequest = jsonRequest("DELETE");
+const patchRequest = jsonRequest("PATCH");
 
 const signUp = (username, email, password) =>
   postRequest("users/signup", {
@@ -117,6 +118,17 @@ const deleteElement = (projectTitle, frameTitle, elementId) =>
       elementId
   );
 
+const addUser = (projectTitle, email) =>
+  postRequest("projects/" + projectTitle + "/users", {
+    email,
+  });
+
+const getUsers = (projectTitle) =>
+  getRequest("projects/" + projectTitle + "/users");
+
+const removeUser = (projectTitle, email) =>
+  patchRequest("projects/" + projectTitle + "/users/" + email);
+
 const serverApiService = {
   signUp,
   signIn,
@@ -137,6 +149,9 @@ const serverApiService = {
   getElement,
   updateElement,
   deleteElement,
+  addUser,
+  getUsers,
+  removeUser,
 };
 
 export default serverApiService;
