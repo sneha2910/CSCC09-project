@@ -19,11 +19,6 @@ const signupUser = async (req, res) => {
         else if (hash) password = hash;
     });
 
-    let emailHash = trim( email );
-    emailHash = strtolower( emailHash );
-    emailHash = md5(emailHash);
-    picURL = "https://www.gravatar.com/avatar/" + emailHash + "?s=80&d=identicon&r=g";
-
     try {
         let user = await Users.findOne({ username: username });
         if (user){
