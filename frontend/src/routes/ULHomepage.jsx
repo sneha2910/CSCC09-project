@@ -65,7 +65,9 @@ const ULHomepage = () => {
             </Row>
           </Container>
         </div>
-      <Link to="/credits"> Credits </Link>
+        <div className='page-footer font-small blue pt-4 text-center pb-0'>
+          <Link to="/credits"> Credits </Link>
+        </div>
     </div>
   );
 };
