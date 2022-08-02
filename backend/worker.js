@@ -26,7 +26,7 @@ function sendEmail(workerData) {
                         "creating UI for your applications.", // plain text body
                 html: "<b>Sign up successfully!<b><hr>Thanks for joining to The UI Lab.<hr>" +
                         "Welcome to the community of The UI Lab and the world of " + 
-                        "creating UI for your applications.", // html body
+                        "creating UI for your applications. <hr> Login <a href=https://theuilab.tk/>here</a> and create your first project!", // html body
             };
             break;
 
@@ -40,7 +40,7 @@ function sendEmail(workerData) {
                          "! Login to TheUILab and check it out!", // plain text body
                 html: `<b>Hi ${workerData.username}!<b><hr>
                         You were added to Project ${workerData.projectTitle} by
-                         ${workerData.sessionUser}! Login to TheUILab and check it out!`, // html body
+                         ${workerData.sessionUser}! Login to  <a href=https://theuilab.tk/>TheUILab</a> and check it out!`, // html body
             };
             break;
 
