@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Button, Container, Row, Stack } from "react-bootstrap";
-import { BsPlus, BsGear } from "react-icons/bs";
+import { Button, Container, Row, Stack, Dropdown } from "react-bootstrap";
+import { BsPlus, BsGear, BsTrash } from "react-icons/bs";
 import ULNavbar from "../components/ULNavbar";
 import ULFrameCover from "../components/ULFrameCover";
 import apiService from "../services/apiService.js";
@@ -12,6 +12,7 @@ const ULProject = () => {
   const projectName = searchParams.get("projectName");
 
   const [frames, setFrames] = useState(null);
+  const [sharedUsers, setSharedUsers] = useState([]);
 
   const getFrames = useCallback(() => {
     return apiService
@@ -34,19 +35,45 @@ const ULProject = () => {
       });
   };
 
+  const getUsers = useCallback(() => {
+    return apiService.getUsers(projectId).then((retn) => {
+      setSharedUsers(retn.users);
+    });
+  }, [projectId]);
+
   const addUser = () => {
     const email = prompt("Enter the email of the user you want to invite");
-    return apiService.addUser(projectId, email)
-    .then(() => {
-      alert("User added successfully");
-    }).catch((error) => {
-      alert("User not added, reason: " + error);
-    });
+    if (!email) {
+      return;
+    }
+    return apiService
+      .addUser(projectId, email)
+      .then(() => {
+        alert("User added successfully");
+        getUsers();
+      })
+      .catch((error) => {
+        alert("User not added, reason: " + error);
+      });
+  };
+
+  const removeUser = (username) => () => {
+    return apiService
+      .removeUser(projectId, username)
+      .then(() => {
+        alert("User removed successfully");
+        getUsers();
+      })
+      .catch((error) => {
+        alert("User not removed, reason: " + error);
+      });
   };
 
   useEffect(() => {
     getFrames();
-  }, [getFrames]);
+    getUsers();
+  }, [getFrames, getUsers]);
+
   return (
     <div>
       <ULNavbar />
@@ -65,6 +92,17 @@ const ULProject = () => {
               <BsPlus className="align-self-center" />
               Invite other user to this project
             </Button>
+            <Dropdown>
+              <Dropdown.Toggle variant="danger" id="dropdown-basic">
+                <BsTrash className="align-self-center" />
+                Remove user from the project
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {sharedUsers && sharedUsers.map((username) => (
+                  <Dropdown.Item onClick={removeUser(username)} key={username}>{username}</Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
           </Stack>
           <Button className="d-flex">
             <BsGear className="align-self-center" />

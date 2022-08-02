@@ -127,7 +127,9 @@ const getUsers = (projectTitle) =>
   getRequest("projects/" + projectTitle + "/users");
 
 const removeUser = (projectTitle, email) =>
-  patchRequest("projects/" + projectTitle + "/users/" + email);
+  patchRequest("projects/" + projectTitle + "/users/", {
+    username: email
+  });
 
 const serverApiService = {
   signUp,

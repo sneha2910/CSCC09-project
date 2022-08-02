@@ -252,7 +252,7 @@ const getUsers = async (req, res) => {
         let project = await Projects.findOne({_id: projectId});
         if(!project) return res.status(400).json({error: "project does not exist!"});
 
-        res.status(200).json(project.users);
+        res.status(200).json({users: project.users});
         
     }catch(err) {
         res.status(400).json({error: err.message});
@@ -457,7 +457,7 @@ const removeUser = async (req, res) => {
             return res.status(403).json({error: "Forbidden"});
         }
 
-        let i = project.owners.findIndex(user => user == username);
+        let i = project.users.findIndex(user => user == username);
         project.users.splice(i, 1);
         project.save();
 
