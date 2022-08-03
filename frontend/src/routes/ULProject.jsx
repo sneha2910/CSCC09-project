@@ -78,7 +78,9 @@ const ULProject = () => {
   return (
     <div>
       <ULNavbar />
-      <h3 className="px-3 pt-3">Home &gt; {projectName}</h3>
+      <h3 className="px-3 pt-3">
+        <Link to="/">Home</Link> &gt; {projectName}
+      </h3>
       <div>
         <div className="px-3 py-1 d-flex justify-content-between">
           <Stack gap={2} direction="horizontal">
@@ -99,9 +101,15 @@ const ULProject = () => {
                 Remove user from the project
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                {sharedUsers && sharedUsers.map((username) => (
-                  <Dropdown.Item onClick={removeUser(username)} key={username}>{username}</Dropdown.Item>
-                ))}
+                {sharedUsers &&
+                  sharedUsers.map((username) => (
+                    <Dropdown.Item
+                      onClick={removeUser(username)}
+                      key={username}
+                    >
+                      {username}
+                    </Dropdown.Item>
+                  ))}
               </Dropdown.Menu>
             </Dropdown>
           </Stack>
