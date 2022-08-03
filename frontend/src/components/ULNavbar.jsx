@@ -13,11 +13,9 @@ const ULNavbar = () => {
   const onClick = () => {
     signOut()
       .then(() => {
-        console.log("Logged out!");
         navigate("/login");
       })
       .catch((err) => {
-        console.log(err);
         navigate("/login");
       });
   };

@@ -77,7 +77,6 @@ const ULDesignElementLayerItem = (props) => {
       elementsToBeUpdated.push(newFromElementParentObject);
     }
     es.updateElements(elementsToBeUpdated);
-    console.log("drop", fromElementId, fromElement);
     setIsDraggedOver(false);
   };
 
@@ -93,7 +92,6 @@ const ULDesignElementLayerItem = (props) => {
 
   /* Select the element onclick */
   const selectThisElement = (e) => {
-    console.log("select this element", element.id);
     const isSelected = es.elementSelection.get(username)?.has(element.id);
     if (e.ctrlKey) {
       if (isSelected) {

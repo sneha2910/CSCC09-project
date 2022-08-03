@@ -12,16 +12,13 @@ export function ULGoogleButton() {
 
   function handleCallbackResponse(response) {
     var userObject = jwt_decode(response.credential);
-    console.log(userObject);
 
     const token = response.credential;
     oauth(token)
       .then((res) => {
-        console.log("Oauth logged in!", document.cookie);
         navigate("/");
       })
       .catch((error) => {
-        console.log(error);
       });
   }
 

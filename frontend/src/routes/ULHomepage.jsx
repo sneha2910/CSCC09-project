@@ -21,7 +21,6 @@ const ULHomepage = () => {
         setProjects(retn.projects);
       })
       .catch((error) => {
-        console.log("get projects failed:", error);
       });
   };
 
@@ -31,7 +30,6 @@ const ULHomepage = () => {
       .createProject(projectName)
       .then(getProjects)
       .catch((error) => {
-        console.log("create project failed:", error);
       });
   };
   useEffect(() => {

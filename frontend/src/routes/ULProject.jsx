@@ -22,7 +22,6 @@ const ULProject = () => {
         setFrames(retn.frames);
       })
       .catch((error) => {
-        console.log("get frames failed:", error);
       });
   }, [projectId]);
 
@@ -32,7 +31,6 @@ const ULProject = () => {
       .createFrame(projectId, frameName, 200, 200)
       .then(getFrames)
       .catch((error) => {
-        console.log("create frame failed:", error);
       });
   };
 

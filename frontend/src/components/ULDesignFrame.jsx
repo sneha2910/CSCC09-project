@@ -75,7 +75,6 @@ const ULDesignFrame = (props) => {
   /* Connect to api service */
   const createElement = () => {
     const newElement = generateExampleElement();
-    console.log("create element:", newElement);
     createElements([newElement]);
   };
 

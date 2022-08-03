@@ -21,10 +21,8 @@ export function  ULSignUpForm(props) {
     const password = passwordRef.current.value;
 
     userService.signUp(username, email, password).catch(error => {
-      console.log(error);
     })
     .then(() => {
-        console.log("Signed up!");
         //navigate to hompage once succesful sign up
         navigate("/");
   });

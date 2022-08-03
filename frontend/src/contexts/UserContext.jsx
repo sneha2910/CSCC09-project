@@ -21,7 +21,6 @@ export const UserContextProvider = (props) => {
         setCurrentUser(getCurrentUserInCookie());
       })
       .catch((err) => {
-        console.log(err);
       });
   };
   const signOut = () => {
@@ -31,7 +30,6 @@ export const UserContextProvider = (props) => {
         setCurrentUser(null);
       })
       .catch((err) => {
-        console.log(err);
         setCurrentUser(null);
       });
   };
@@ -42,7 +40,6 @@ export const UserContextProvider = (props) => {
         setCurrentUser(getCurrentUserInCookie());
       })
       .catch((err) => {
-        console.log(err);
       });
   };
 

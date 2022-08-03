@@ -18,11 +18,9 @@ export default function ULSignUp() {
   const createUser = (username, email, password) => {
     signUp(username, email, password)
       .then((retn) => {
-        console.log("create user success:", retn);
         navigate("/login");
       })
       .catch((error) => {
-        console.log("create user failed:", error);
       });
   };
 

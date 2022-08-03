@@ -61,7 +61,6 @@ const useElementService = (projectId, frameId) => {
       });
 
       socket.on("connect_error", (err) => {
-        console.log(`connect_error due to ${err.message}`);
       });
       /* Set the websocket */
       setWebsocket(socket);
@@ -96,7 +95,6 @@ const useElementService = (projectId, frameId) => {
         projectId,
         frameId,
       });
-      console.log("Emitted");
       setElementsToBePushed(new Set());
     }, 256);
 

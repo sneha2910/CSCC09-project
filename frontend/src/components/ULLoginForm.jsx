@@ -15,12 +15,10 @@ export function ULLoginForm() {
 
     signIn(emailRef.current.value, passwordRef.current.value)
       .then((res) => {
-        console.log("Logged in!" + res);
         /* Redirect to the homepage */
         navigate("/");
       })
       .catch((err) => {
-        console.log(err);
       });
       
     //Reset form after sign in
