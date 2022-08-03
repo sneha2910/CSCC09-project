@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    networks:
+      ulnet:
+        ipv4_address: 172.18.0.2
+  backend:
+    build: ./backend
+    networks:
+      ulnet:
+        ipv4_address: 172.18.0.3
+networks:
+  ulnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+          gateway: 172.18.0.1
+
