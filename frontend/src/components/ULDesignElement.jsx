@@ -3,6 +3,7 @@ import ULDesignElementHandle from "./ULDesignElementHandle";
 import { useContext } from "react";
 import { UserContext } from "../contexts/UserContext";
 
+//designs an element with all its properties including design, position, mode
 const ULDesignElement = (props) => {
   const {
     element,

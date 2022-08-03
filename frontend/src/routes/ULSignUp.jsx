@@ -8,6 +8,7 @@ import { ULGoogleButton } from "../components/ULGoogleButton";
 import { useContext } from "react";
 import { UserContext } from "../contexts/UserContext";
 
+//Sign up page
 export default function ULSignUp() {
   // Save to local storage every time the messages are changed
 

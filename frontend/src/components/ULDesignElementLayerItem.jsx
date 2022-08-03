@@ -3,6 +3,7 @@ import { useContext, useState } from "react";
 import { UserContext } from "../contexts/UserContext";
 import ULDesignElementLayerItemGap from "./ULDesignElementLayerItemGap";
 
+//to drag and drop and element to layer them one above the other
 const ULDesignElementLayerItem = (props) => {
   const { element, es, elementStack } = props;
   const { username } = useContext(UserContext);

@@ -9,6 +9,7 @@ import { useContext, useState } from "react";
 import apiService from "../services/apiService.js";
 import { useEffect } from "react";
 
+//creates homeoage for user by getting all their projects
 const ULHomepage = () => {
   const { username } = useContext(UserContext);
   const [projects, setProjects] = useState(null);

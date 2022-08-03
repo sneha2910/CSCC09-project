@@ -6,6 +6,7 @@ import ULNavbar from "../components/ULNavbar";
 import ULFrameCover from "../components/ULFrameCover";
 import apiService from "../services/apiService.js";
 
+//create frames inside a project for a user
 const ULProject = () => {
   const [searchParams] = useSearchParams();
   const projectId = searchParams.get("projectId");
