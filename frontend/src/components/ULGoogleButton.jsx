@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import userService from "../services/userService.js";
 import { UserContext } from "../contexts/UserContext";
 import { useContext } from "react";
 
+//oauth button to signup/signin with google
 export function ULGoogleButton() {
   const navigate = useNavigate();
 
@@ -12,16 +12,13 @@ export function ULGoogleButton() {
 
   function handleCallbackResponse(response) {
     var userObject = jwt_decode(response.credential);
-    console.log(userObject);
 
     const token = response.credential;
     oauth(token)
       .then((res) => {
-        console.log("Oauth logged in!", document.cookie);
         navigate("/");
       })
       .catch((error) => {
-        console.log(error);
       });
   }
 

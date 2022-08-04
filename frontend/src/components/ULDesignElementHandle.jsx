@@ -1,4 +1,6 @@
 import "./ULDesignElementHandle.css";
+
+//handles element movement on frame
 const ULDesignElementHandle = (props) => {
   const {
     setMovementCb,

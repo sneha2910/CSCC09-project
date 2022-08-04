@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col';
 import { ULResetPassword } from "../components/ULResetPassword";
 
 export default function ULForgetPassword() {
-   
+ //Forget password page  
   return (
         <Container>
             <Row className="justify-content-md-center">

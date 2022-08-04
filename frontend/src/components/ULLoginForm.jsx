@@ -3,7 +3,6 @@ import Form from "react-bootstrap/Form";
 import { useRef, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
-import PropTypes from 'prop-types';
 
 export function ULLoginForm() {
   const emailRef = useRef(null);
@@ -16,17 +15,17 @@ export function ULLoginForm() {
 
     signIn(emailRef.current.value, passwordRef.current.value)
       .then((res) => {
-        console.log("Logged in!" + res);
         /* Redirect to the homepage */
         navigate("/");
       })
       .catch((err) => {
-        console.log(err);
       });
-
+      
+    //Reset form after sign in
     e.target.reset();
   };
 
+  //Form for logging in a user
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Group className="mb-3" controlId="formBasicEmail">

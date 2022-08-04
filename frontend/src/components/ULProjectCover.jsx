@@ -3,6 +3,7 @@ import { Card } from "react-bootstrap";
 import defaultDocument from "../media/project.png";
 import { Link } from "react-router-dom";
 
+//Creates a project cover for user's projects
 const ULProjectCover = (props) => {
   const { project } = props;
   return (
