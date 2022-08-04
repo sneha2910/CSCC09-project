@@ -34,7 +34,7 @@ on:
 
 env:
   AWS_REGION: us-west-1                   # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: ul_frontend:latest           # set this to your Amazon ECR repository name
+  ECR_REPOSITORY: ul_frontend           # set this to your Amazon ECR repository name
   ECS_SERVICE: ul_frontend_service                 # set this to your Amazon ECS service name
   ECS_CLUSTER: ulapp                 # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: .aws/frontend.json # set this to the path to your Amazon ECS task definition
