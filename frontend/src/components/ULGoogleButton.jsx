@@ -31,11 +31,13 @@ export function ULGoogleButton() {
     google.accounts.id.renderButton(document.getElementById("signInDiv"), {
       theme: "outline",
       size: "large",
+      shape: "pill",
     });
   }, []);
 
   return (
     <div className="gsibutton">
+      <script src="https://accounts.google.com/gsi/client" async defer></script>
       <div id="signInDiv"></div>
     </div>
   );

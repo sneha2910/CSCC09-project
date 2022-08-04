@@ -5,6 +5,7 @@ import { BsPlus, BsGear, BsTrash } from "react-icons/bs";
 import ULNavbar from "../components/ULNavbar";
 import ULFrameCover from "../components/ULFrameCover";
 import apiService from "../services/apiService.js";
+import { SimpleGrid, Text, Spacer } from "@chakra-ui/react";
 
 //create frames inside a project for a user
 const ULProject = () => {
@@ -74,9 +75,9 @@ const ULProject = () => {
   return (
     <div>
       <ULNavbar />
-      <h3 className="px-3 pt-3">
+      <Text fontSize="2xl">
         <Link to="/">Home</Link> &gt; {projectName}
-      </h3>
+      </Text>
       <div>
         <div className="px-3 py-1 d-flex justify-content-between">
           <Stack gap={2} direction="horizontal">
@@ -113,18 +114,16 @@ const ULProject = () => {
             <BsGear className="align-self-center" />
           </Button>
         </div>
-        <Container className="px-5 py-2">
-          <Row>
-            {frames &&
-              frames.map((frame) => (
-                <ULFrameCover
-                  key={frame.title}
-                  project={{ _id: projectId, title: projectName }}
-                  frame={frame}
-                />
-              ))}
-          </Row>
-        </Container>
+        <SimpleGrid columns={[3, null, 6]} spacing="40px">
+          {frames &&
+            frames.map((frame) => (
+              <ULFrameCover
+                key={frame.title}
+                project={{ _id: projectId, title: projectName }}
+                frame={frame}
+              />
+            ))}
+        </SimpleGrid>
       </div>
       <Link to="/credits"> Credits </Link>
     </div>
