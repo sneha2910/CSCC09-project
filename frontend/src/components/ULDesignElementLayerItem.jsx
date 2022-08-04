@@ -1,4 +1,3 @@
-import { Stack } from "react-bootstrap";
 import { useContext, useState } from "react";
 import { UserContext } from "../contexts/UserContext";
 import ULDesignElementLayerItemGap from "./ULDesignElementLayerItemGap";
