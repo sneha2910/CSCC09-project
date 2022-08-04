@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import Stack from "react-bootstrap/Stack";
 import Container from "react-bootstrap/Container";
+import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { ULSignUpForm } from "../components/ULSignUpForm";
@@ -26,19 +27,22 @@ export default function ULSignUp() {
   };
 
   return (
-    <Container>
-      <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <Container className="justify-content-md-center" md={{ span: 5 }}>
+      <Card border="light">
       <Row className="justify-content-md-center">
-        <Col md={{ span: 6 }}>
+        <Col md={{ span: 4 }}>
           <Stack gap={3}>
-            Create an account to use The UI Lab
-            <ULGoogleButton />
-            or
+            <Card.Title>Create an account to use The UI Lab</Card.Title>
+            <Card.Body>
+              <ULGoogleButton />
+            <Card.Text>or</Card.Text>
             <ULSignUpForm createUser={createUser} />
             <Link to="/Login">Log in</Link>
+            </Card.Body>
           </Stack>
         </Col>
       </Row>
+      </Card>
     </Container>
   );
 }
