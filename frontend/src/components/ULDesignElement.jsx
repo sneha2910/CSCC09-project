@@ -62,6 +62,7 @@ const ULDesignElement = (props) => {
     return {
       ...element.position,
       ...element.style,
+      ...element.text,
     };
   };
 
