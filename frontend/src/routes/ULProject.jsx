@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Button, Container, Row, Stack, Dropdown } from "react-bootstrap";
-import { BsPlus, BsGear, BsTrash } from "react-icons/bs";
+import { Button, Stack, Dropdown } from "react-bootstrap";
+import { BsPlus } from "react-icons/bs";
 import ULNavbar from "../components/ULNavbar";
 import ULFrameCover from "../components/ULFrameCover";
 import apiService from "../services/apiService.js";
-import { SimpleGrid, Text, Spacer } from "@chakra-ui/react";
+import { SimpleGrid, Text } from "@chakra-ui/react";
 
 //create frames inside a project for a user
 const ULProject = () => {
@@ -94,7 +94,6 @@ const ULProject = () => {
             </Button>
             <Dropdown>
               <Dropdown.Toggle variant="danger" id="dropdown-basic">
-                <BsTrash className="align-self-center" />
                 Remove user from the project
               </Dropdown.Toggle>
               <Dropdown.Menu>
@@ -110,9 +109,6 @@ const ULProject = () => {
               </Dropdown.Menu>
             </Dropdown>
           </Stack>
-          <Button className="d-flex">
-            <BsGear className="align-self-center" />
-          </Button>
         </div>
         <SimpleGrid columns={[3, null, 6]} spacing="40px">
           {frames &&

@@ -7,7 +7,6 @@ const ULDesign = () => {
   /* Get the name of the file from the URL */
   const [searchParams] = useSearchParams();
   const projectId = searchParams.get("projectId");
-  const frameId = searchParams.get("frameId");
   const projectName = searchParams.get("projectName");
   const frameName = searchParams.get("frameName");
 

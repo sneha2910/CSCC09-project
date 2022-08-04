@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import userService from "../services/userService.js";
 
 export function ULSignUpForm(props) {
-  const { createUser } = props;
   const navigate = useNavigate();
 
   const emailRef = useRef(null);

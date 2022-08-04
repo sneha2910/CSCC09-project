@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import jwt_decode from "jwt-decode";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
 import { useContext } from "react";
@@ -11,8 +10,6 @@ export function ULGoogleButton() {
   const { oauth } = useContext(UserContext);
 
   function handleCallbackResponse(response) {
-    var userObject = jwt_decode(response.credential);
-
     const token = response.credential;
     oauth(token)
       .then((res) => {
@@ -33,7 +30,7 @@ export function ULGoogleButton() {
       size: "large",
       shape: "pill",
     });
-  }, []);
+  });
 
   return (
     <div className="gsibutton">
