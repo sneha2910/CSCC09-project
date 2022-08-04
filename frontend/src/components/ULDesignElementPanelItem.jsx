@@ -1,5 +1,6 @@
-import { toKebabCase } from '../utils/utils.js';
+import { toKebabCase } from "../utils/utils.js";
 
+//create single panel for element properties
 const ULDesignElementPanelItem = (props) => {
   const { type, name, value, update, min, max } = props;
   const kebabName = toKebabCase(name);
@@ -20,10 +21,14 @@ const ULDesignElementPanelItem = (props) => {
           min={min}
           max={max}
         />
-        {type === "range" && <output htmlFor={`ul-design-element-panel-${kebabName}`}>{value}</output>}
+        {type === "range" && (
+          <output htmlFor={`ul-design-element-panel-${kebabName}`}>
+            {value}
+          </output>
+        )}
       </label>
     </form>
   );
-}
+};
 
 export default ULDesignElementPanelItem;

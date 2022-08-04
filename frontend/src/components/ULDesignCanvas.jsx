@@ -21,7 +21,6 @@ const ULDesignCanvas = (props) => {
   });
 
   const selectThisElement = (element) => (e) => {
-    console.log("select this element", element.id);
     const isSelected = elementSelection.get(username)?.has(element.id);
     if (e.ctrlKey) {
       if (isSelected) {
@@ -75,7 +74,9 @@ const ULDesignCanvas = (props) => {
     }
   };
 
-  const noop = (i) => {return noop;};
+  const noop = (i) => {
+    return noop;
+  };
 
   return (
     <div

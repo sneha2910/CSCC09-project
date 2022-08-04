@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Button, Container, Row, Stack, Dropdown } from "react-bootstrap";
-import { BsPlus, BsGear, BsTrash } from "react-icons/bs";
+import { Button, Stack, Dropdown } from "react-bootstrap";
+import { BsPlus } from "react-icons/bs";
 import ULNavbar from "../components/ULNavbar";
 import ULFrameCover from "../components/ULFrameCover";
 import apiService from "../services/apiService.js";
+import { SimpleGrid, Text } from "@chakra-ui/react";
 
+//create frames inside a project for a user
 const ULProject = () => {
   const [searchParams] = useSearchParams();
   const projectId = searchParams.get("projectId");
@@ -20,9 +22,7 @@ const ULProject = () => {
       .then((retn) => {
         setFrames(retn.frames);
       })
-      .catch((error) => {
-        console.log("get frames failed:", error);
-      });
+      .catch((error) => {});
   }, [projectId]);
 
   const createFrame = () => {
@@ -30,9 +30,7 @@ const ULProject = () => {
     return apiService
       .createFrame(projectId, frameName, 200, 200)
       .then(getFrames)
-      .catch((error) => {
-        console.log("create frame failed:", error);
-      });
+      .catch((error) => {});
   };
 
   const getUsers = useCallback(() => {
@@ -77,7 +75,9 @@ const ULProject = () => {
   return (
     <div>
       <ULNavbar />
-      <h3 className="px-3 pt-3">Home &gt; {projectName}</h3>
+      <Text fontSize="2xl">
+        <Link to="/">Home</Link> &gt; {projectName}
+      </Text>
       <div>
         <div className="px-3 py-1 d-flex justify-content-between">
           <Stack gap={2} direction="horizontal">
@@ -94,32 +94,32 @@ const ULProject = () => {
             </Button>
             <Dropdown>
               <Dropdown.Toggle variant="danger" id="dropdown-basic">
-                <BsTrash className="align-self-center" />
                 Remove user from the project
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                {sharedUsers && sharedUsers.map((username) => (
-                  <Dropdown.Item onClick={removeUser(username)} key={username}>{username}</Dropdown.Item>
-                ))}
+                {sharedUsers &&
+                  sharedUsers.map((username) => (
+                    <Dropdown.Item
+                      onClick={removeUser(username)}
+                      key={username}
+                    >
+                      {username}
+                    </Dropdown.Item>
+                  ))}
               </Dropdown.Menu>
             </Dropdown>
           </Stack>
-          <Button className="d-flex">
-            <BsGear className="align-self-center" />
-          </Button>
         </div>
-        <Container className="px-5 py-2">
-          <Row>
-            {frames &&
-              frames.map((frame) => (
-                <ULFrameCover
-                  key={frame.title}
-                  project={{ _id: projectId, title: projectName }}
-                  frame={frame}
-                />
-              ))}
-          </Row>
-        </Container>
+        <SimpleGrid columns={[3, null, 6]} spacing="40px">
+          {frames &&
+            frames.map((frame) => (
+              <ULFrameCover
+                key={frame.title}
+                project={{ _id: projectId, title: projectName }}
+                frame={frame}
+              />
+            ))}
+        </SimpleGrid>
       </div>
       <Link to="/credits"> Credits </Link>
     </div>

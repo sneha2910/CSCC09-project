@@ -1,4 +1,4 @@
-import { useEffect, useState} from 'react';
+import { useEffect, useState } from "react";
 
 export const useCurrentUser = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -12,7 +12,6 @@ export const useCurrentUser = () => {
       setCurrentUser(username.split("=")[1]);
     }
   }, []);
-
 
   return {
     currentUser,

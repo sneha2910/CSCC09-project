@@ -1,16 +1,17 @@
 import "./ULDesignElementHandle.css";
+
+//handles element movement on frame
 const ULDesignElementHandle = (props) => {
-  const {
-    setMovementCb,
-    handlePos,
-    elementRef,
-    element,
-  } = props;
+  const { setMovementCb, handlePos, elementRef, element } = props;
 
   const onMouseDown = (e) => {
     const { clientX: startClientX, clientY: startClientY } = e;
-    const { offsetLeft, offsetTop, offsetWidth, offsetHeight } =
-      elementRef.current;
+    const {
+      offsetLeft,
+      offsetTop,
+      offsetWidth,
+      offsetHeight,
+    } = elementRef.current;
     const mouseMoveCb = (e) => {
       const { clientX, clientY } = e;
       const diffX = clientX - startClientX;

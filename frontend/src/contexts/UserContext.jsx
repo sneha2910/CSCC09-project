@@ -10,6 +10,8 @@ export const UserContextProvider = (props) => {
       "$1"
     );
   };
+
+  //sets current user after signing in/out/up a user
   const [currentUser, setCurrentUser] = useState(getCurrentUserInCookie());
 
   const signIn = (email, password) => {
@@ -18,9 +20,7 @@ export const UserContextProvider = (props) => {
       .then(() => {
         setCurrentUser(getCurrentUserInCookie());
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   };
   const signOut = () => {
     return userService
@@ -29,7 +29,6 @@ export const UserContextProvider = (props) => {
         setCurrentUser(null);
       })
       .catch((err) => {
-        console.log(err);
         setCurrentUser(null);
       });
   };
@@ -39,13 +38,13 @@ export const UserContextProvider = (props) => {
       .then(() => {
         setCurrentUser(getCurrentUserInCookie());
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   };
 
   return (
-    <UserContext.Provider value={{ username: currentUser, signIn, signOut, oauth }}>
+    <UserContext.Provider
+      value={{ username: currentUser, signIn, signOut, oauth }}
+    >
       {props.children}
     </UserContext.Provider>
   );

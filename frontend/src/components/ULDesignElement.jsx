@@ -3,6 +3,7 @@ import ULDesignElementHandle from "./ULDesignElementHandle";
 import { useContext } from "react";
 import { UserContext } from "../contexts/UserContext";
 
+//designs an element with all its properties including design, position, mode
 const ULDesignElement = (props) => {
   const {
     element,
@@ -61,6 +62,7 @@ const ULDesignElement = (props) => {
     return {
       ...element.position,
       ...element.style,
+      ...element.text,
     };
   };
 
@@ -78,6 +80,7 @@ const ULDesignElement = (props) => {
                 .map((elemId) => {
                   return es.elements.get(elemId);
                 })
+                .filter((elem) => elem !== undefined)
                 .map((elem) => {
                   return (
                     <ULDesignElement
