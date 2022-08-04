@@ -95,7 +95,7 @@ const useElementService = (projectId, frameId) => {
         frameId,
       });
       setElementsToBePushed(new Set());
-    }, 256);
+    }, 128);
 
     /* On unmount, clear the timeout */
     return () => {

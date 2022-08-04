@@ -80,6 +80,7 @@ const ULDesignElement = (props) => {
                 .map((elemId) => {
                   return es.elements.get(elemId);
                 })
+                .filter((elem) => elem !== undefined)
                 .map((elem) => {
                   return (
                     <ULDesignElement
