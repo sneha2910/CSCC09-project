@@ -35,7 +35,7 @@ A user might be collaborating with other users on a project and can add other us
 To provide scalability and security to our application, once the application has been created, it will be deployed in a docker container to allow for easy set up of the application.
 
 
-## Key features that would be completed by the beta version
+## Features
 - Sign in/sign up: Users can create an account using email and password or sign in with other OAuth 2.0 providers.
 - Create a new project: users can create new UI prototypes projects using the instructional buttons on the website.
 - Add users to document: users working on a certain project can add users to their project and give them the access to view only or to edit the prototype. 
@@ -48,15 +48,10 @@ To provide scalability and security to our application, once the application has
 - Docker: the application will be contained inside a docker container.
 - Websocket: Used as a fast communication protocol.
 
-## Additional features that would be completed by the final version
-- Animations: Users can see animation of loading 
-- Notes: users can add notes on chosen frames and UI elements for everyone working on the project to see.
-- Exporting: users can export their UI prototype as PDFs or images.
-
 ## Tech stack
 - Frontend: React
 - Backend: Expressjs
 - Database: MongoDB Atlas
 
 ## Method of deployment
-We will build a docker image of the application. Then we will deploy the docker image on AWS virtual machine.
+We will build a docker image of the application. Then we will deploy the docker image on AWS EC2.
