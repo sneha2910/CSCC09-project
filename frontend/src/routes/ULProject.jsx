@@ -21,8 +21,7 @@ const ULProject = () => {
       .then((retn) => {
         setFrames(retn.frames);
       })
-      .catch((error) => {
-      });
+      .catch((error) => {});
   }, [projectId]);
 
   const createFrame = () => {
@@ -30,8 +29,7 @@ const ULProject = () => {
     return apiService
       .createFrame(projectId, frameName, 200, 200)
       .then(getFrames)
-      .catch((error) => {
-      });
+      .catch((error) => {});
   };
 
   const getUsers = useCallback(() => {

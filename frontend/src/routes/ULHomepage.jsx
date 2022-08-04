@@ -20,8 +20,7 @@ const ULHomepage = () => {
       .then((retn) => {
         setProjects(retn.projects);
       })
-      .catch((error) => {
-      });
+      .catch((error) => {});
   };
 
   const createProject = () => {
@@ -29,8 +28,7 @@ const ULHomepage = () => {
     return apiService
       .createProject(projectName)
       .then(getProjects)
-      .catch((error) => {
-      });
+      .catch((error) => {});
   };
   useEffect(() => {
     getProjects();
@@ -39,34 +37,32 @@ const ULHomepage = () => {
   return (
     <div>
       <ULNavbar />
-      <h3 className="px-3 pt-3">
-        {`Hi, ${username}!`}
-      </h3>
-        <div>
-          <div className="px-3 py-1 d-flex justify-content-between">
-            <Button
-              className="d-flex justify-content-between"
-              onClick={createProject}
-            >
-              <BsPlus className="align-self-center" />
-              <span className="align-self-center">New Project</span>
-            </Button>
-            <Button className="d-flex">
-              <BsGear className="align-self-center" />
-            </Button>
-          </div>
-          <Container className="px-5 py-2">
-            <Row>
-              {projects &&
-                projects.map((project) => (
-                  <ULProjectCover key={project.title} project={project} />
-                ))}
-            </Row>
-          </Container>
+      <h3 className="px-3 pt-3">{`Hi, ${username}!`}</h3>
+      <div>
+        <div className="px-3 py-1 d-flex justify-content-between">
+          <Button
+            className="d-flex justify-content-between"
+            onClick={createProject}
+          >
+            <BsPlus className="align-self-center" />
+            <span className="align-self-center">New Project</span>
+          </Button>
+          <Button className="d-flex">
+            <BsGear className="align-self-center" />
+          </Button>
         </div>
-        <div className='page-footer font-small blue pt-4 text-center pb-0'>
-          <Link to="/credits"> Credits </Link>
-        </div>
+        <Container className="px-5 py-2">
+          <Row>
+            {projects &&
+              projects.map((project) => (
+                <ULProjectCover key={project.title} project={project} />
+              ))}
+          </Row>
+        </Container>
+      </div>
+      <div className="page-footer font-small blue pt-4 text-center pb-0">
+        <Link to="/credits"> Credits </Link>
+      </div>
     </div>
   );
 };

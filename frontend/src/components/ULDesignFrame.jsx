@@ -50,22 +50,26 @@ const ULDesignFrame = (props) => {
   const duplicateElements = () => {
     const getDuplicateElements = (elementIds, parentId) => {
       if (!elementIds || elementIds.length === 0) return [];
-      const elementObjects = elementIds.map((elementId) => {
-        const element = es.elements.get(elementId);
-        return element;
-      }).map((element) => {
-        const currId = `elem${Math.random().toString()}`;
-        return {
-          id: currId,
-          position: element.position,
-          style: element.style,
-          text: element.text,
-          parent: parentId ?? undefined,
-          children: getDuplicateElements(element.children, currId).map((child) => {
-            return child.id;
-          }),
-        };
-      });
+      const elementObjects = elementIds
+        .map((elementId) => {
+          const element = es.elements.get(elementId);
+          return element;
+        })
+        .map((element) => {
+          const currId = `elem${Math.random().toString()}`;
+          return {
+            id: currId,
+            position: element.position,
+            style: element.style,
+            text: element.text,
+            parent: parentId ?? undefined,
+            children: getDuplicateElements(element.children, currId).map(
+              (child) => {
+                return child.id;
+              }
+            ),
+          };
+        });
       createElements(elementObjects);
       return elementObjects;
     };

@@ -38,9 +38,9 @@ const signIn = (email, password) =>
     password,
   });
 
-const oauth = (token) => 
+const oauth = (token) =>
   postRequest("users/auth", {
-    token
+    token,
   });
 
 const signOut = () => getRequest("users/signout");
@@ -127,7 +127,7 @@ const getUsers = (projectTitle) =>
 
 const removeUser = (projectTitle, email) =>
   patchRequest("projects/" + projectTitle + "/users/", {
-    username: email
+    username: email,
   });
 
 const serverApiService = {

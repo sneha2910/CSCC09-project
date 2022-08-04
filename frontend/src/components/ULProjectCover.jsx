@@ -8,7 +8,9 @@ const ULProjectCover = (props) => {
   const { project } = props;
   return (
     <Card className="col-2">
-      <Link to={`/project?projectId=${project._id}&projectName=${project.title}`}>
+      <Link
+        to={`/project?projectId=${project._id}&projectName=${project.title}`}
+      >
         <Card.Img variant="top" src={defaultDocument} />
         <Card.Body>
           <Card.Title>{project.title}</Card.Title>

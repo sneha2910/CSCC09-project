@@ -1,5 +1,10 @@
-const express = require('express');
-const { signupUser, signinUser, signoutUser, authGoogle} = require('../controllers/userController');
+const express = require("express");
+const {
+  signupUser,
+  signinUser,
+  signoutUser,
+  authGoogle,
+} = require("../controllers/userController");
 
 // router is an instance of the express router.
 // We use it to define our routes.
@@ -10,15 +15,15 @@ const router = express.Router();
 const ObjectId = require("mongodb").ObjectId;
 
 //route to signup for a user
-router.post('/signup/', signupUser);
+router.post("/signup/", signupUser);
 
 //route to signin for a user
-router.post('/signin/', signinUser);
+router.post("/signin/", signinUser);
 
 //route to signout for a user user
-router.get('/signout/', signoutUser);
+router.get("/signout/", signoutUser);
 
 //route to google oauth signup and signin for a user
-router.post('/auth/', authGoogle);
+router.post("/auth/", authGoogle);
 
 module.exports = router;

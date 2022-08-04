@@ -20,8 +20,7 @@ export default function ULSignUp() {
       .then((retn) => {
         navigate("/login");
       })
-      .catch((error) => {
-      });
+      .catch((error) => {});
   };
 
   return (

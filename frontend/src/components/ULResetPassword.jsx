@@ -1,8 +1,7 @@
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 
 export function ULResetPassword(props) {
-
   return (
     <Form>
       <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -14,5 +13,5 @@ export function ULResetPassword(props) {
         Reset Password
       </Button>
     </Form>
-  )
+  );
 }

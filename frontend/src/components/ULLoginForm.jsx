@@ -18,9 +18,8 @@ export function ULLoginForm() {
         /* Redirect to the homepage */
         navigate("/");
       })
-      .catch((err) => {
-      });
-      
+      .catch((err) => {});
+
     //Reset form after sign in
     e.target.reset();
   };
@@ -47,5 +46,4 @@ export function ULLoginForm() {
       </Button>
     </Form>
   );
-
 }

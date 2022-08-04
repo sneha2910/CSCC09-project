@@ -60,8 +60,7 @@ const useElementService = (projectId, frameId) => {
         });
       });
 
-      socket.on("connect_error", (err) => {
-      });
+      socket.on("connect_error", (err) => {});
       /* Set the websocket */
       setWebsocket(socket);
     }

@@ -6,7 +6,7 @@ const toSocketMiddleware = (middleware) => (socket, next) => {
 };
 
 const joinRoom = (socket, projectId, frameId) => {
-  console.log(`${projectId}/${frameId}`)
+  console.log(`${projectId}/${frameId}`);
   socket.join(`${projectId}/${frameId}`);
 };
 const leaveRoom = (socket) => {
@@ -45,13 +45,15 @@ module.exports = (server, sessionParser) => {
       joinRoom(socket, projectId, frameId);
       const currentFrameSelection =
         userSelection.get(`${projectId}/${frameId}`) ?? new Map();
-        console.log(currentFrameSelection);
-        Array.from(currentFrameSelection.entries()).forEach(([username, selection]) => {
+      console.log(currentFrameSelection);
+      Array.from(currentFrameSelection.entries()).forEach(
+        ([username, selection]) => {
           socket.emit("updateSelection", {
             username,
             selection,
           });
-        });
+        }
+      );
     });
     socket.on("leaveRoom", () => {
       leaveRoom(socket);
@@ -73,32 +75,34 @@ module.exports = (server, sessionParser) => {
 
     const updateElements = (data) => {
       const { elements, projectId, frameId } = data;
-      Projects.findOne({ _id: projectId }).then((project) => {
-        console.log(project.frames);
-        const frame = project.frames.find((frame) => frame._id == frameId);
-        if (!frame) {
-          return Promise.reject("Frame not found");
-        }
-
-        elements.forEach((elm) => {
-          const existingElement = frame.elements.find(
-            (element) => elm.id === element.content.id
-          );
-          if (existingElement) {
-            existingElement.content = elm;
-          } else {
-            frame.elements.push({ content: elm });
+      Projects.findOne({ _id: projectId })
+        .then((project) => {
+          console.log(project.frames);
+          const frame = project.frames.find((frame) => frame._id == frameId);
+          if (!frame) {
+            return Promise.reject("Frame not found");
           }
+
+          elements.forEach((elm) => {
+            const existingElement = frame.elements.find(
+              (element) => elm.id === element.content.id
+            );
+            if (existingElement) {
+              existingElement.content = elm;
+            } else {
+              frame.elements.push({ content: elm });
+            }
+          });
+          return project.save().then(() => {
+            console.log("Elements updated", socket.rooms);
+            return socket.broadcast
+              .to(`${projectId}/${frameId}`)
+              .emit("updateElements", { elements });
+          });
+        })
+        .catch((err) => {
+          console.log(err);
         });
-        return project.save().then(() => {
-          console.log("Elements updated", socket.rooms);
-          return socket.broadcast
-            .to(`${projectId}/${frameId}`)
-            .emit("updateElements", { elements });
-        });
-      }).catch((err) => {
-        console.log(err);
-      });
     };
     socket.on("updateElements", updateElements);
 
@@ -116,8 +120,8 @@ module.exports = (server, sessionParser) => {
             if (elementsToBeDeleted.includes(elementId)) {
               return;
             }
-            const element = frame.elements.find(
-              (element) => element.content.children?.includes(elementId)
+            const element = frame.elements.find((element) =>
+              element.content.children?.includes(elementId)
             );
             if (element) {
               elementsToBeDeleted.push(element.content.id);

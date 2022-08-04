@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Button, Form, Navbar } from "react-bootstrap";
 import { BsSearch, BsVectorPen } from "react-icons/bs";
-import {UserContext} from "../contexts/UserContext";
+import { UserContext } from "../contexts/UserContext";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -34,11 +34,13 @@ const ULNavbar = () => {
         <Button className="d-flex" onClick={onClick}>
           Sign out
         </Button>
-       ) : (
+      ) : (
         <Button className="d-flex">
-          <Link to="/Login" className="text-light">Log in</Link>
+          <Link to="/Login" className="text-light">
+            Log in
+          </Link>
         </Button>
-      )} 
+      )}
     </Navbar>
   );
 };

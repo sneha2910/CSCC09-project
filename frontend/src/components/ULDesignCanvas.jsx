@@ -74,7 +74,9 @@ const ULDesignCanvas = (props) => {
     }
   };
 
-  const noop = (i) => {return noop;};
+  const noop = (i) => {
+    return noop;
+  };
 
   return (
     <div

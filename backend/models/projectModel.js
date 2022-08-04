@@ -1,35 +1,44 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const elementSchema = new Schema({
-    content : {
-        type: Object
-    }
-}, {timestampData: true});
+const elementSchema = new Schema(
+  {
+    content: {
+      type: Object,
+    },
+  },
+  { timestampData: true }
+);
 
-const frameSchema = new Schema({
+const frameSchema = new Schema(
+  {
     title: {
-        type: String
+      type: String,
     },
     height: {
-        type: String
+      type: String,
     },
     width: {
-        type: String
+      type: String,
     },
-    elements:[elementSchema],
-}, {timestampData: true});
+    elements: [elementSchema],
+  },
+  { timestampData: true }
+);
 
-const projectSchema = new Schema({
+const projectSchema = new Schema(
+  {
     users: {
-        type: [String],
-        required: true,
+      type: [String],
+      required: true,
     },
     title: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
-    frames: [frameSchema]
-}, {timestamps: true});
+    frames: [frameSchema],
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('Projects', projectSchema);
+module.exports = mongoose.model("Projects", projectSchema);

@@ -18,8 +18,7 @@ export function ULGoogleButton() {
       .then((res) => {
         navigate("/");
       })
-      .catch((error) => {
-      });
+      .catch((error) => {});
   }
 
   useEffect(() => {
