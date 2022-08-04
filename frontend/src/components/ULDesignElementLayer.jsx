@@ -2,6 +2,7 @@ import { Stack } from "react-bootstrap";
 import ULDesignElementLayerItem from "./ULDesignElementLayerItem";
 import ULDesignElementLayerItemGap from "./ULDesignElementLayerItemGap";
 
+//create layers for elements
 const ULDesignElementLayer = (props) => {
   const { es } = props;
   const { elements } = es;

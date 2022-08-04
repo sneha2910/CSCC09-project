@@ -37,6 +37,7 @@ module.exports = (server, sessionParser) => {
     }
   });
 
+  //socket connection for user
   io.on("connection", (socket) => {
     console.log(`User ${socket.request.session.username} connected`);
     socket.on("joinRoom", (data) => {

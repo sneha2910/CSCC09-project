@@ -1,10 +1,13 @@
 const {parentPort, workerData} = require("worker_threads");
 const nodemailer = require('nodemailer');
 
+//worker thread calls sendEmail
 sendEmail(workerData);
 
 function sendEmail(workerData) {
     let mailInfo;
+
+    //create a transporter to send emails from
     let transporter = nodemailer.createTransport({
         host: "smtp-mail.outlook.com",
         port: 587,
@@ -15,6 +18,7 @@ function sendEmail(workerData) {
         },
       });
     
+    //switch between different type of email actions to create email content
     switch(workerData.action){
         case 'signup': 
             mailInfo = {
@@ -40,13 +44,16 @@ function sendEmail(workerData) {
                          "! Login to TheUILab and check it out!", // plain text body
                 html: `<b>Hi ${workerData.username}!<b><hr>
                         You were added to Project ${workerData.projectTitle} by
-                         ${workerData.sessionUser}! Login to  <a href=https://theuilab.tk/>TheUILab</a> and check it out!`, // html body
+                         ${workerData.sessionUser}! Login to <a href=https://theuilab.tk/>TheUILab</a> 
+                         and check it out!`, // html body
             };
             break;
 
     }
     
     transporter.sendMail(mailInfo, (error) => {
+        //if unable to send email returns success equal to false to parent thread
+        //otherwise true
         if (error) {
             parentPort.postMessage(false);
         }

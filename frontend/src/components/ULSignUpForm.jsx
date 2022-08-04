@@ -6,8 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import userService from '../services/userService.js';
 
 export function  ULSignUpForm(props) {
-    const { createUser } = props;
-    const navigate = useNavigate();
+  const { createUser } = props;
+  const navigate = useNavigate();
 
   const emailRef = useRef(null);
   const usernameRef = useRef(null);
@@ -21,16 +21,17 @@ export function  ULSignUpForm(props) {
     const password = passwordRef.current.value;
 
     userService.signUp(username, email, password).catch(error => {
-      console.log(error);
     })
     .then(() => {
-        console.log("Signed up!");
+        //navigate to hompage once succesful sign up
         navigate("/");
   });
-      
+    
+  //Reset form after sign up
     e.target.reset();
   };
 
+  //Form for user sign up
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Group className="mb-3" controlId="formBasicEmail">

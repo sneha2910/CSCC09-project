@@ -1,5 +1,4 @@
 const API_URL = window.location.origin + "/api/";
-// const API_URL = "http://localhost:3001/api/";
 
 const jsonRequest = (method) => (resource, data) => {
   return fetch(API_URL + resource, {

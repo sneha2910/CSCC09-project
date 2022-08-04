@@ -5,6 +5,7 @@ import {UserContext} from "../contexts/UserContext";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
+//top navigation bar
 const ULNavbar = () => {
   const { username, signOut } = useContext(UserContext);
   const navigate = useNavigate();
@@ -12,11 +13,9 @@ const ULNavbar = () => {
   const onClick = () => {
     signOut()
       .then(() => {
-        console.log("Logged out!");
         navigate("/login");
       })
       .catch((err) => {
-        console.log(err);
         navigate("/login");
       });
   };

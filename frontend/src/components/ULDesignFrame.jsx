@@ -19,6 +19,7 @@ const ULDesignFrame = (props) => {
 
   const { username } = useContext(UserContext);
 
+  //creates a basic element for a user
   const generateExampleElement = () => {
     return {
       id: `elem${Math.random().toString()}`,
@@ -45,6 +46,7 @@ const ULDesignFrame = (props) => {
     };
   };
 
+  //creates a dupliucate for elements on a frame
   const duplicateElements = () => {
     const getDuplicateElements = (elementIds, parentId) => {
       if (!elementIds || elementIds.length === 0) return [];
@@ -73,10 +75,10 @@ const ULDesignFrame = (props) => {
   /* Connect to api service */
   const createElement = () => {
     const newElement = generateExampleElement();
-    console.log("create element:", newElement);
     createElements([newElement]);
   };
 
+  //open presentation mode for a frame
   const openPresentationModeInNewTab = () => {
     window.open(
       `/presentation?projectId=${projectId}&frameId=${frameId}`,

@@ -6,6 +6,7 @@ import ULNavbar from "../components/ULNavbar";
 import ULFrameCover from "../components/ULFrameCover";
 import apiService from "../services/apiService.js";
 
+//create frames inside a project for a user
 const ULProject = () => {
   const [searchParams] = useSearchParams();
   const projectId = searchParams.get("projectId");
@@ -21,7 +22,6 @@ const ULProject = () => {
         setFrames(retn.frames);
       })
       .catch((error) => {
-        console.log("get frames failed:", error);
       });
   }, [projectId]);
 
@@ -31,7 +31,6 @@ const ULProject = () => {
       .createFrame(projectId, frameName, 200, 200)
       .then(getFrames)
       .catch((error) => {
-        console.log("create frame failed:", error);
       });
   };
 
@@ -77,7 +76,9 @@ const ULProject = () => {
   return (
     <div>
       <ULNavbar />
-      <h3 className="px-3 pt-3">Home &gt; {projectName}</h3>
+      <h3 className="px-3 pt-3">
+        <Link to="/">Home</Link> &gt; {projectName}
+      </h3>
       <div>
         <div className="px-3 py-1 d-flex justify-content-between">
           <Stack gap={2} direction="horizontal">
@@ -98,9 +99,15 @@ const ULProject = () => {
                 Remove user from the project
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                {sharedUsers && sharedUsers.map((username) => (
-                  <Dropdown.Item onClick={removeUser(username)} key={username}>{username}</Dropdown.Item>
-                ))}
+                {sharedUsers &&
+                  sharedUsers.map((username) => (
+                    <Dropdown.Item
+                      onClick={removeUser(username)}
+                      key={username}
+                    >
+                      {username}
+                    </Dropdown.Item>
+                  ))}
               </Dropdown.Menu>
             </Dropdown>
           </Stack>

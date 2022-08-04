@@ -3,6 +3,7 @@ import ULDesignElementPanelItem from "./ULDesignElementPanelItem";
 import { useContext } from "react";
 import { UserContext } from "../contexts/UserContext";
 
+//create panel of all element properties that can be changed by user
 const ULDesignElementPanel = (props) => {
   const { es } = props;
   const { elements, updateElements, elementSelection } = es;

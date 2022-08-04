@@ -3,6 +3,7 @@ import { Card } from "react-bootstrap";
 import defaultDocument from "../media/frame.png";
 import { Link } from "react-router-dom";
 
+//creates a frame cover with title and image
 const ULFrameCover = (props) => {
   const { project, frame } = props;
   const { _id: projectId, title: projectName } = project;

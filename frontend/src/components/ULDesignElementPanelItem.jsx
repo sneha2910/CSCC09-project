@@ -1,5 +1,6 @@
 import { toKebabCase } from '../utils/utils.js';
 
+//create single panel for element properties
 const ULDesignElementPanelItem = (props) => {
   const { type, name, value, update, min, max } = props;
   const kebabName = toKebabCase(name);

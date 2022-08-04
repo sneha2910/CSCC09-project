@@ -3,6 +3,8 @@ const Projects = require('../models/projectModel');
 const Users = require('../models/userModel');
 
 //post methods
+
+//create a new project
 const createProject = async (req, res) => {
     const {title} = req.body;
     try {
@@ -22,6 +24,7 @@ const createProject = async (req, res) => {
     }
 };
 
+//create a new frame inside a project
 const createFrame = async (req, res) => {
     const {title, height, width} = req.body;
     const projectId = req.params.projectId;
@@ -49,6 +52,7 @@ const createFrame = async (req, res) => {
     }
 };
 
+//create a new element inside a frame of a project
 const createElement = async (req, res) => {
     const projectId = req.params.projectId;
     const frameId = req.params.frameId;
@@ -75,6 +79,7 @@ const createElement = async (req, res) => {
     }
 };
 
+//add a user to a project
 const addUser = async (req, res) => {
     const projectId = req.params.projectId;
     const email = req.body.email;
@@ -99,8 +104,11 @@ const addUser = async (req, res) => {
             return res.status(400).json({error: "User already added!"});
         }
 
+        //data to be sent to a worker
         let workerData = {action: 'add', sessionUser: req.session.username, projectTitle: project.title, username: user.username, email: email};
         let worker = new Worker('./worker.js', {workerData: workerData});
+
+        //recieves a message after sending email
         worker.once("message", (success) => {
             if (!success){
                 res.status(400).json({error: "Email not sent!"});
@@ -120,6 +128,8 @@ const addUser = async (req, res) => {
 };
 
 //get methods
+
+//get all projects of a user
 const getProjects = async (req, res) => {
     try{
         let projects = await Projects.find({ users: req.session.username }, {_id: 1, title: 1});
@@ -129,6 +139,7 @@ const getProjects = async (req, res) => {
     }
 };
 
+//get a project by id
 const getProject = async (req, res) => {
     const projectId = req.params.projectId;
     try{
@@ -145,6 +156,7 @@ const getProject = async (req, res) => {
     }
 };
 
+//get all frames of a project
 const getFrames = async (req, res) => {
     const projectId = req.params.projectId;
     try{
@@ -165,6 +177,7 @@ const getFrames = async (req, res) => {
     }
 };
 
+//get a frame by project id and frame id
 const getFrame = async (req, res) => {
     const projectId = req.params.projectId;
     const frameId = req.params.frameId;
@@ -190,6 +203,7 @@ const getFrame = async (req, res) => {
     }
 };
 
+//get all elements of a frame inside a project
 const getElements = async (req, res) => {
     const projectId = req.params.projectId;
     const frameId = req.params.frameId;
@@ -219,6 +233,7 @@ const getElements = async (req, res) => {
     }
 };
 
+//get an element of a frame inside a project
 const getElement = async (req, res) => {
     const projectId = req.params.projectId;
     const frameId = req.params.frameId;
@@ -246,6 +261,7 @@ const getElement = async (req, res) => {
     }
 };
 
+//get all users of a project
 const getUsers = async (req, res) => {
     const projectId = req.params.projectId;
     try{
@@ -260,6 +276,8 @@ const getUsers = async (req, res) => {
 };
 
 //delete methods
+
+//delete a project
 const deleteProject = async (req, res) => {
     const projectId = req.params.projectId;
     try{
@@ -278,6 +296,7 @@ const deleteProject = async (req, res) => {
     }
 };
 
+//delete a frame of a project
 const deleteFrame = async (req, res) => {
     const projectId = req.params.projectId;
     const frameId = req.params.frameId;
@@ -304,6 +323,7 @@ const deleteFrame = async (req, res) => {
     }
 };
 
+//delete an element of a frame of a project
 const deleteElement = async (req, res) => {
     const projectId = req.params.projectId;
     const frameId = req.params.frameId;
@@ -341,6 +361,8 @@ const deleteElement = async (req, res) => {
 
 
 //put/patch methods
+
+//modify project title
 const updateProject = async (req, res) => {
     const projectId = req.params.projectId;
     const title = req.body.title;
@@ -359,6 +381,7 @@ const updateProject = async (req, res) => {
     }
 };
 
+//modify frame properties
 const updateFrame= async (req, res) => {
     const projectId = req.params.projectId;
     const frameId = req.params.frameId;
@@ -407,6 +430,7 @@ const updateFrame= async (req, res) => {
     }
 };
 
+//modify properties of an element
 const updateElement = async (req, res) => {
     const projectId = req.params.projectId;
     const frameId = req.params.frameId;
@@ -446,6 +470,7 @@ const updateElement = async (req, res) => {
     }
 };
 
+//remove a user from a project
 const removeUser = async (req, res) => {
     const projectId = req.params.projectId;
     const username = req.query.username;

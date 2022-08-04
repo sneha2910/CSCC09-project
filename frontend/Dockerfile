@@ -3,13 +3,17 @@
 
 # Build the React app
 # basically, this compiles the React jsx to static HTML and js files.
-FROM node:14-alpine3.14 as build
+FROM node:18 as build
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
-COPY package.json ./
-COPY package-lock.json ./
+COPY package*.json ./
+
 RUN npm i
-COPY . ./
+
+COPY . .
+
+#RUN npm install react-scripts@3.4.1 -g --silent
+
 RUN npm run build
 
 # Serve these static files with NGINX.
